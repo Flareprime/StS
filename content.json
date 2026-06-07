@@ -1,0 +1,242 @@
+{
+  "activities": [
+    {
+      "activity_id": 1,
+      "activity_type": "myth_fact",
+      "activity_title": "Myth vs. Fact",
+      "activity_description": "How much do you really know about human trafficking? Read each statement and decide: Myth or Fact?",
+      "questions": [
+        {
+          "question_id": 1,
+          "question_order": 1,
+          "question_text": "Sex trafficking is the most common and widespread type of human trafficking.",
+          "answer_options": [
+            {
+              "answer_id": 1,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "Both sex trafficking and labor trafficking are common. It is difficult to say which is more widespread because statistics and data are difficult to gather, and some existing research is limited."
+            },
+            {
+              "answer_id": 2,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "Both sex trafficking and labor trafficking are common. It is difficult to say which is more widespread because statistics and data are difficult to gather, and some existing research is limited."
+            }
+          ],
+          "avatar_speech_correct": "Right! Both types are real and serious. Don't let movies fool you!",
+          "avatar_speech_wrong": "Common myth! Labor trafficking is just as real — and often invisible."
+        },
+        {
+          "question_id": 2,
+          "question_order": 2,
+          "question_text": "Perpetrators of sex trafficking often exploit people they already know.",
+          "answer_options": [
+            {
+              "answer_id": 3,
+              "answer_option": "Myth",
+              "correct_answer": false,
+              "feedback_text": "Perpetrators often target people they know — family members, friends, romantic partners, and acquaintances. Traffickers who begin as strangers will usually form some type of relationship to earn trust before attempting to traffic them."
+            },
+            {
+              "answer_id": 4,
+              "answer_option": "Fact",
+              "correct_answer": true,
+              "feedback_text": "Perpetrators often target people they know — family members, friends, romantic partners, and acquaintances. Traffickers who begin as strangers will usually form some type of relationship to earn trust before attempting to traffic them."
+            }
+          ],
+          "avatar_speech_correct": "Exactly. Traffickers build trust first. That's what makes it so hard to spot.",
+          "avatar_speech_wrong": "Actually, traffickers very often know their victims — that's part of what makes grooming so dangerous."
+        },
+        {
+          "question_id": 3,
+          "question_order": 3,
+          "question_text": "People who experience trafficking are usually kidnapped or physically confined by their traffickers.",
+          "answer_options": [
+            {
+              "answer_id": 5,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "Survivors are often not physically confined. Traffickers use psychological manipulation, emotional control, debt, and fear instead. Many survivors may not even identify themselves as victims because the relationship feels complicated."
+            },
+            {
+              "answer_id": 6,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "Survivors are often not physically confined. Traffickers use psychological manipulation, emotional control, debt, and fear instead. Many survivors may not even identify themselves as victims because the relationship feels complicated."
+            }
+          ],
+          "avatar_speech_correct": "Yes! Control is usually psychological — not physical chains.",
+          "avatar_speech_wrong": "Very common misunderstanding. The control is mostly psychological."
+        },
+        {
+          "question_id": 4,
+          "question_order": 4,
+          "question_text": "Only girls and women can be victims of sex trafficking.",
+          "answer_options": [
+            {
+              "answer_id": 7,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "Men and boys can also experience sex trafficking. While we don't know exactly what percentage of victims identify as male, we do know that male victims are less likely to be identified. Anyone, regardless of gender, can be targeted."
+            },
+            {
+              "answer_id": 8,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "Men and boys can also experience sex trafficking. While we don't know exactly what percentage of victims identify as male, we do know that male victims are less likely to be identified. Anyone, regardless of gender, can be targeted."
+            }
+          ],
+          "avatar_speech_correct": "Right — anyone can be targeted. Gender doesn't protect you.",
+          "avatar_speech_wrong": "This is a harmful myth. Male victims exist and are often overlooked."
+        },
+        {
+          "question_id": 5,
+          "question_order": 5,
+          "question_text": "Labor trafficking is a global issue that also occurs inside the United States.",
+          "answer_options": [
+            {
+              "answer_id": 9,
+              "answer_option": "Myth",
+              "correct_answer": false,
+              "feedback_text": "Labor trafficking happens in the U.S. across many industries including agriculture, construction, restaurants, nail salons, and domestic work. It is not only a problem in other countries."
+            },
+            {
+              "answer_id": 10,
+              "answer_option": "Fact",
+              "correct_answer": true,
+              "feedback_text": "Labor trafficking happens in the U.S. across many industries including agriculture, construction, restaurants, nail salons, and domestic work. It is not only a problem in other countries."
+            }
+          ],
+          "avatar_speech_correct": "100% fact. It happens right here, often in plain sight.",
+          "avatar_speech_wrong": "Surprise — labor trafficking does happen in the U.S. across many industries."
+        },
+        {
+          "question_id": 6,
+          "question_order": 6,
+          "question_text": "Human trafficking and human smuggling are the same crime.",
+          "answer_options": [
+            {
+              "answer_id": 11,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "Human smuggling involves illegally transporting people across international borders. Human trafficking is about exploitation using force, fraud, or coercion — it doesn't require any movement across borders at all."
+            },
+            {
+              "answer_id": 12,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "Human smuggling involves illegally transporting people across international borders. Human trafficking is about exploitation using force, fraud, or coercion — it doesn't require any movement across borders at all."
+            }
+          ],
+          "avatar_speech_correct": "Good catch! Smuggling = crossing borders. Trafficking = exploitation.",
+          "avatar_speech_wrong": "These are two different crimes. Trafficking doesn't even require moving someone."
+        },
+        {
+          "question_id": 7,
+          "question_order": 7,
+          "question_text": "Traffickers prey on vulnerabilities, not specific demographics — anyone can be targeted.",
+          "answer_options": [
+            {
+              "answer_id": 13,
+              "answer_option": "Myth",
+              "correct_answer": false,
+              "feedback_text": "Traffickers look for vulnerabilities like isolation, financial hardship, family problems, or emotional distress. While some groups face higher risk, trafficking can happen to anyone. Awareness and protective factors help reduce risk for everyone."
+            },
+            {
+              "answer_id": 14,
+              "answer_option": "Fact",
+              "correct_answer": true,
+              "feedback_text": "Traffickers look for vulnerabilities like isolation, financial hardship, family problems, or emotional distress. While some groups face higher risk, trafficking can happen to anyone. Awareness and protective factors help reduce risk for everyone."
+            }
+          ],
+          "avatar_speech_correct": "Exactly right. Vulnerability is the target — not age, race, or zip code.",
+          "avatar_speech_wrong": "Actually, traffickers look for vulnerabilities, not a specific type of person."
+        },
+        {
+          "question_id": 8,
+          "question_order": 8,
+          "question_text": "People who are being trafficked always want help getting out immediately.",
+          "answer_options": [
+            {
+              "answer_id": 15,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "People in trafficking situations may not identify as victims, may feel loyal to their trafficker due to grooming, or may fear what happens if they leave. Emotional manipulation, shame, and fear of law enforcement are common reasons survivors don't seek help right away."
+            },
+            {
+              "answer_id": 16,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "People in trafficking situations may not identify as victims, may feel loyal to their trafficker due to grooming, or may fear what happens if they leave. Emotional manipulation, shame, and fear of law enforcement are common reasons survivors don't seek help right away."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — it's complicated. Emotional manipulation makes leaving really hard.",
+          "avatar_speech_wrong": "This is a misconception. Trauma bonds and fear make it complicated."
+        },
+        {
+          "question_id": 9,
+          "question_order": 9,
+          "question_text": "Labor trafficking can only happen in agriculture or farming industries.",
+          "answer_options": [
+            {
+              "answer_id": 17,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "Labor trafficking can occur in any industry involving forced labor — construction, restaurants, nail salons, domestic work, traveling sales crews, technology, and more. Coercive work environments with wage theft, threats, and restricted movement are red flags in any sector."
+            },
+            {
+              "answer_id": 18,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "Labor trafficking can occur in any industry involving forced labor — construction, restaurants, nail salons, domestic work, traveling sales crews, technology, and more. Coercive work environments with wage theft, threats, and restricted movement are red flags in any sector."
+            }
+          ],
+          "avatar_speech_correct": "Right! It can happen in restaurants, nail salons, tech — anywhere.",
+          "avatar_speech_wrong": "Nope! Labor trafficking happens across many industries, including ones nearby."
+        },
+        {
+          "question_id": 10,
+          "question_order": 10,
+          "question_text": "Sex trafficking of a minor does not require proof of force, fraud, or coercion.",
+          "answer_options": [
+            {
+              "answer_id": 19,
+              "answer_option": "Myth",
+              "correct_answer": false,
+              "feedback_text": "Under federal law (the Trafficking Victims Protection Act), if a minor is induced to perform a commercial sex act, it is sex trafficking regardless of whether force, fraud, or coercion was used. There is no such thing as a 'child prostitute' — a minor in this situation is always a victim of trafficking."
+            },
+            {
+              "answer_id": 20,
+              "answer_option": "Fact",
+              "correct_answer": true,
+              "feedback_text": "Under federal law (the Trafficking Victims Protection Act), if a minor is induced to perform a commercial sex act, it is sex trafficking regardless of whether force, fraud, or coercion was used. There is no such thing as a 'child prostitute' — a minor in this situation is always a victim of trafficking."
+            }
+          ],
+          "avatar_speech_correct": "Important legal fact. Minors cannot consent to commercial sex — period.",
+          "avatar_speech_wrong": "Under federal law, minors are automatically victims — no need to prove force."
+        }
+      ]
+    }
+  ],
+  "resources": [
+    {
+      "resource_id": 1,
+      "resource_name": "National Human Trafficking Hotline",
+      "resource_url": "https://polarisproject.org",
+      "resource_phone": "1-888-373-7888 · Text \"HELP\" to 233733"
+    },
+    {
+      "resource_id": 2,
+      "resource_name": "Crisis Text Line",
+      "resource_url": "https://crisistextline.org",
+      "resource_phone": "Text HOME to 741741"
+    },
+    {
+      "resource_id": 3,
+      "resource_name": "SARC (Sexual Assault Resource Center)",
+      "resource_url": null,
+      "resource_phone": null
+    }
+  ]
+}

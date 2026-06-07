@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<!--
+  ╔══════════════════════════════════════════════════════════════════════╗
+  ║  SPOT THE SIGNS — Myth vs. Fact Activity                            ║
+  ║  myth-vs-fact.html                                                  ║
+  ╠══════════════════════════════════════════════════════════════════════╣
+  ║  PURPOSE                                                            ║
+  ║  Self-contained activity module. Loads its questions and resources  ║
+  ║  from content.json (same folder). Shows a question screen with      ║
+  ║  MYTH / FACT buttons, feedback after each answer, and a score       ║
+  ║  screen at the end with hotline resources.                          ║
+  ║                                                                     ║
+  ║  NAVIGATION                                                         ║
+  ║  ← Home button in header → returns to index.html                   ║
+  ║  ↺ Play Again button → resets score and restarts this module        ║
+  ║                                                                     ║
+  ║  MAINTAINER NOTES                                                   ║
+  ║  - All question content is in content.json — edit there, not here.  ║
+  ║  - To swap the avatar art, search "AVATAR SWAP" in this file.       ║
+  ║  - Colors are set in the :root CSS variables section.               ║
+  ║  - This file must be served from a web server (GitHub Pages, etc.)  ║
+  ║    because fetch() is used to load content.json.                    ║
+  ╚══════════════════════════════════════════════════════════════════════╝
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Myth vs. Fact — Spot the Signs</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ════════════════════════════════════════════════════════════════
+       COLOR VARIABLES — CBC Brand Colors (Brand Guide, April 2020)
+       Keep in sync with index.html if you change these.
+       ════════════════════════════════════════════════════════════════ */
+    :root {
+      --hawk-blue:           #002e6d;   /* PMS 294C — primary navy */
+      --hawk-blue-mid:       #003f96;   /* slightly lighter, hover states */
+      --soaring-blue:        #69b1e2;   /* PMS 292C — sky blue accent */
+      --soaring-light:       #e8f3fb;   /* very light blue, card backgrounds */
+      --gold:                #ffbf3b;   /* PMS 136C — accent yellow/gold */
+      --gold-dark:           #e6a800;   /* darker gold, hover/active */
+      --correct-green:       #2e7d32;   /* feedback: correct answer */
+      --correct-green-light: #e8f5e9;
+      --wrong-amber:         #e65100;   /* feedback: wrong answer (warm, not red) */
+      --wrong-amber-light:   #fff8e1;
+      --text:                #0d1b2a;
+      --text-soft:           #3a4f6a;
+      --bg:                  #f0f5fc;
+      --white:               #ffffff;
+      --shadow:              0 4px 20px rgba(0, 46, 109, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       HEADER
+       Left: ← Home (link back to index.html)
+       Center: module name
+       Right: live score pill (hidden until activity starts)
+       ════════════════════════════════════════════════════════════════ */
+    .app-header {
+      width: 100%;
+      background: var(--hawk-blue);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .header-title {
+      font-weight: 900;
+      font-size: 1rem;
+      color: var(--white);
+      letter-spacing: 0.03em;
+      text-align: center;
+      flex: 1;
+    }
+    .header-title span { color: var(--gold); }
+
+    /* ← Home button: always links back to index.html */
+    .btn-home {
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.3);
+      border-radius: 8px;
+      padding: 5px 10px;
+      color: var(--white);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 700;
+      font-size: 0.75rem;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      min-width: 70px;
+      display: inline-block;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s;
+    }
+    .btn-home:active { background: rgba(255,255,255,0.28); }
+
+    /* Score pill (top-right): hidden until activity starts */
+    .score-pill {
+      background: rgba(255,255,255,0.15);
+      border: 1.5px solid rgba(255,255,255,0.35);
+      border-radius: 20px;
+      padding: 4px 10px;
+      font-weight: 800;
+      font-size: 0.82rem;
+      color: var(--white);
+      display: none;
+      align-items: center;
+      gap: 4px;
+      min-width: 70px;
+      justify-content: center;
+    }
+    .score-pill.visible { display: flex; }
+    .score-pill .pill-label { opacity: 0.7; font-size: 0.7rem; font-weight: 600; }
+
+    /* ════════════════════════════════════════════════════════════════
+       PROGRESS BAR
+       Fills left-to-right as user advances through questions.
+       Width controlled by JS: updateProgress(fraction)
+       ════════════════════════════════════════════════════════════════ */
+    .progress-wrap { width: 100%; background: rgba(0,0,0,0.1); height: 5px; }
+    .progress-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
+
+    /* ════════════════════════════════════════════════════════════════
+       SCREEN SYSTEM
+       Only one .screen is visible at a time.
+       showScreen(id) swaps the .active class.
+       ════════════════════════════════════════════════════════════════ */
+    .screen {
+      width: 100%;
+      max-width: 480px;
+      padding: 20px 16px 48px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      animation: fadeIn 0.3s ease;
+    }
+    .screen.active { display: flex; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       LOADING & ERROR STATES
+       Shown before content.json loads, or if it fails.
+       ════════════════════════════════════════════════════════════════ */
+    .status-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      min-height: 60vh;
+      text-align: center;
+      padding: 32px 24px;
+      width: 100%;
+    }
+    .spinner {
+      width: 42px; height: 42px;
+      border: 4px solid var(--soaring-light);
+      border-top-color: var(--hawk-blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .status-title { font-weight: 800; font-size: 1.1rem; color: var(--hawk-blue); }
+    .status-msg   { font-size: 0.88rem; color: var(--text-soft); line-height: 1.5; max-width: 320px; }
+    .btn-retry {
+      padding: 12px 28px;
+      background: var(--hawk-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       AVATAR + SPEECH BUBBLE
+       AVATAR SWAP: Replace the <svg> elements with <img> tags when
+       real artwork is available. See note on each svg below.
+       ════════════════════════════════════════════════════════════════ */
+    .avatar-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      width: 100%;
+      margin-top: 4px;
+    }
+    .avatar-figure { width: 72px; height: 90px; flex-shrink: 0; }
+    .avatar-bubble {
+      background: var(--white);
+      border: 2px solid var(--soaring-blue);
+      border-radius: 16px 16px 16px 4px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.45;
+      box-shadow: var(--shadow);
+      flex: 1;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       INTRO SCREEN ELEMENTS
+       ════════════════════════════════════════════════════════════════ */
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px;
+      width: 100%;
+      box-shadow: var(--shadow);
+    }
+    .intro-title {
+      font-weight: 900;
+      font-size: 1.65rem;
+      color: var(--hawk-blue);
+      text-align: center;
+      line-height: 1.2;
+    }
+    .intro-title span { color: var(--gold-dark); }
+
+    .steps-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      width: 100%;
+    }
+    .steps-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+    .step-num {
+      background: var(--hawk-blue);
+      color: var(--white);
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 0.82rem;
+      flex-shrink: 0;
+    }
+
+    .warning-note {
+      background: var(--wrong-amber-light);
+      border-left: 4px solid var(--gold);
+      border-radius: 0 8px 8px 0;
+      padding: 10px 14px;
+      font-size: 0.8rem;
+      color: #4a2c00;
+      width: 100%;
+      line-height: 1.5;
+    }
+
+    /* ════════════════════════════════════════════════════════════════
+       QUESTION SCREEN ELEMENTS
+       ════════════════════════════════════════════════════════════════ */
+    .q-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+    }
+    .question-label {
+      font-weight: 800;
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--hawk-blue);
+    }
+    .counter { font-size: 0.8rem; color: var(--text-soft); font-weight: 600; }
+
+    .statement-card {
+      background: linear-gradient(135deg, var(--soaring-light), #d6e9f8);
+      border: 2px solid var(--soaring-blue);
+      border-radius: 12px;
+      padding: 18px;
+      width: 100%;
+    }
+    .statement-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--hawk-blue);
+      margin-bottom: 6px;
+    }
+    .statement-text {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.55;
+      color: var(--text);
+    }
+
+    /* ── Answer buttons ───────────────────────────────────────────── */
+    .answer-buttons { display: flex; gap: 12px; width: 100%; }
+    .answer-btn {
+      flex: 1;
+      padding: 18px 12px;
+      border: 3px solid transparent;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 900;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .answer-btn .btn-icon { font-size: 1.5rem; }
+
+    .btn-myth { background: #fff0ee; border-color: #c0392b; color: #922b21; }
+    .btn-fact { background: var(--soaring-light); border-color: var(--hawk-blue); color: var(--hawk-blue); }
+    .btn-myth:not(:disabled):hover,
+    .btn-myth:not(:disabled):active { background: #c0392b; color: var(--white); transform: scale(0.97); }
+    .btn-fact:not(:disabled):hover,
+    .btn-fact:not(:disabled):active { background: var(--hawk-blue); color: var(--white); transform: scale(0.97); }
+    .answer-btn:disabled { cursor: not-allowed; }
+
+    /* Post-answer state classes set by JS */
+    .btn-selected-correct { background: var(--correct-green)       !important; border-color: var(--correct-green)     !important; color: var(--white)           !important; }
+    .btn-selected-wrong   { background: #c0392b                    !important; border-color: #c0392b                  !important; color: var(--white)           !important; animation: shake 0.3s ease; }
+    .btn-reveal-correct   { background: var(--correct-green-light) !important; border-color: var(--correct-green)     !important; color: var(--correct-green)   !important; opacity: 1 !important; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
+
+    /* ── Feedback panel ─────────────────────────────────────────────
+       Wrong = warm amber, not red. Intentional — avoids negativity.
+    ─────────────────────────────────────────────────────────────── */
+    .feedback-panel { width: 100%; border-radius: 12px; padding: 16px; display: none; animation: fadeIn 0.25s ease; }
+    .feedback-panel.show    { display: block; }
+    .feedback-panel.correct { background: var(--correct-green-light); border: 2px solid var(--correct-green); }
+    .feedback-panel.wrong   { background: var(--wrong-amber-light);   border: 2px solid var(--gold); }
+    .feedback-result { font-weight: 800; font-size: 1rem; margin-bottom: 5px; }
+    .feedback-panel.correct .feedback-result { color: var(--correct-green); }
+    .feedback-panel.wrong   .feedback-result { color: var(--wrong-amber); }
+    .feedback-answer-reveal { font-size: 0.82rem; font-weight: 700; color: var(--text-soft); margin-bottom: 8px; }
+    .feedback-explanation   { font-size: 0.88rem; line-height: 1.55; color: var(--text); }
+
+    /* ── Primary / Next button ────────────────────────────────────── */
+    .btn-primary {
+      width: 100%;
+      padding: 16px;
+      background: var(--hawk-blue);
+      color: var(--white);
+      border: none;
+      border-radius: 14px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn-primary:active { background: var(--hawk-blue-mid); transform: scale(0.98); }
+    .btn-gold           { background: var(--gold-dark); color: var(--hawk-blue); }
+    .btn-gold:active    { background: var(--gold); }
+    .btn-next           { display: none; }
+    .btn-next.show      { display: block; }
+
+    /* ════════════════════════════════════════════════════════════════
+       COMPLETION SCREEN ELEMENTS
+       ════════════════════════════════════════════════════════════════ */
+    .complete-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      background: var(--white);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    /* Conic gradient ring showing score percentage.
+       --pct variable set by JS: scoreRing.style.setProperty('--pct', pct+'%') */
+    .score-ring {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      background: conic-gradient(var(--hawk-blue) 0% var(--pct,0%), #d0d8e8 var(--pct,0%));
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .score-inner {
+      width: 82px; height: 82px;
+      background: var(--white);
+      border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-number { font-weight: 900; font-size: 2rem; color: var(--hawk-blue); line-height: 1; }
+    .score-denom  { font-size: 0.72rem; color: var(--text-soft); }
+    .complete-title { font-weight: 900; font-size: 1.25rem; color: var(--hawk-blue); }
+    .complete-msg   { font-size: 0.85rem; color: var(--text-soft); margin-top: 6px; line-height: 1.5; }
+
+    .resources-card { background: var(--white); border-radius: 14px; padding: 18px; width: 100%; box-shadow: var(--shadow); }
+    .resources-title {
+      font-weight: 800;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--hawk-blue);
+      margin-bottom: 12px;
+      border-bottom: 2px solid var(--gold);
+      padding-bottom: 8px;
+    }
+    .resource-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
+    .resource-item:last-child { border-bottom: none; padding-bottom: 0; }
+    .resource-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+    .resource-phone { font-size: 0.85rem; color: var(--hawk-blue); font-weight: 600; margin-top: 2px; }
+    .resource-url   { font-size: 0.78rem; color: var(--text-soft); margin-top: 1px; }
+
+    /* Play Again + Try Another buttons on completion screen */
+    .btn-row { display: flex; gap: 10px; width: 100%; }
+    .btn-row .btn-primary { flex: 1; font-size: 0.9rem; padding: 14px 10px; }
+    .btn-restart { background: var(--gold-dark); color: var(--hawk-blue); }
+    .btn-restart:active { background: var(--gold); }
+
+    .footer-credit {
+      font-size: 0.72rem;
+      color: var(--text-soft);
+      text-align: center;
+      line-height: 1.6;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       HEADER
+       ← Home always links back to index.html (never goes away).
+       Score pill appears when activity starts.
+       ════════════════════════════════════════════════════════════════ -->
+  <header class="app-header">
+    <a class="btn-home" href="index.html">← Home</a>
+    <div class="header-title">MYTH vs. <span>FACT</span></div>
+    <div class="score-pill" id="scorePill">
+      <span class="pill-label">SCORE&nbsp;</span>
+      <span id="pillScore">0</span>/<span id="pillTotal">?</span>
+    </div>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       LOADING SCREEN
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="status-screen" id="screenLoading">
+    <div class="spinner"></div>
+    <div class="status-title">Loading…</div>
+    <div class="status-msg">Fetching content.json</div>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       ERROR SCREEN
+       ════════════════════════════════════════════════════════════════ -->
+  <div class="status-screen" id="screenError" style="display: none;">
+    <div style="font-size: 2.5rem;">⚠️</div>
+    <div class="status-title">Content unavailable</div>
+    <div class="status-msg" id="errorMsg">Could not load activity content.</div>
+    <button class="btn-retry" onclick="loadContent()">Try Again</button>
+    <a class="btn-home" href="index.html" style="margin-top: 4px;">← Back to Home</a>
+  </div>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       INTRO SCREEN
+       Brief orientation before the activity starts.
+       Title and description are populated from content.json by JS.
+       ════════════════════════════════════════════════════════════════ -->
+  <main class="screen" id="screenIntro">
+
+    <div class="avatar-row">
+      <!-- AVATAR SWAP: Replace svg with <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
+      <svg class="avatar-figure" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="36" cy="14" r="11" fill="#002e6d" stroke="#001a47" stroke-width="2"/>
+        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
+        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
+        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
+        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
+        <line x1="36" y1="25" x2="36" y2="58" stroke="#002e6d" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="58" x2="22" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="58" x2="50" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="22" y1="80" x2="14" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="50" y1="80" x2="58" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="avatar-bubble">
+        How much do you really know about human trafficking? Let's find out!
+      </div>
+    </div>
+
+    <!-- Title / description populated from content.json -->
+    <div class="card" style="text-align: center;">
+      <div class="intro-title" id="introTitle">Myth vs. <span>Fact</span></div>
+      <p style="font-size: 0.9rem; color: var(--text-soft); margin-top: 8px;" id="introDesc">
+        Read each statement and decide: Myth or Fact?
+      </p>
+    </div>
+
+    <ul class="steps-list card">
+      <li><span class="step-num">1</span> Read a statement about human trafficking</li>
+      <li><span class="step-num">2</span> Tap <strong>MYTH</strong> or <strong>FACT</strong></li>
+      <li><span class="step-num">3</span> See the real answer and why it matters</li>
+    </ul>
+
+    <div class="warning-note">
+      ⚠️ This topic can hit close to home for some people. Take a breath anytime you need one.
+    </div>
+
+    <button class="btn-primary btn-gold" onclick="startActivity()">Let's Go →</button>
+  </main>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       QUESTION SCREEN
+       All content (text, counter, avatar, feedback) is set by JS.
+       ════════════════════════════════════════════════════════════════ -->
+  <main class="screen" id="screenQuestion">
+
+    <div class="avatar-row">
+      <!--
+        Dynamic avatar: face (<g id="avatarFace">) and arms (<g id="avatarArms">)
+        are swapped by setAvatarExpression() in JS.
+
+        AVATAR SWAP: Replace this entire svg with three <img> elements
+        (avatar-thinking.png, avatar-happy.png, avatar-surprised.png)
+        and toggle display in setAvatarExpression() instead of innerHTML.
+      -->
+      <svg class="avatar-figure" id="avatarSVG" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="36" cy="14" r="11" fill="#002e6d" stroke="#001a47" stroke-width="2"/>
+        <g id="avatarFace"></g>
+        <line x1="36" y1="25" x2="36" y2="58" stroke="#002e6d" stroke-width="3.5" stroke-linecap="round"/>
+        <g id="avatarArms"></g>
+        <line x1="36" y1="58" x2="22" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="58" x2="50" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="22" y1="80" x2="14" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="50" y1="80" x2="58" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="avatar-bubble" id="avatarSpeech">Myth or Fact? Take your best guess!</div>
+    </div>
+
+    <div class="q-header">
+      <span class="question-label">Myth or Fact?</span>
+      <span class="counter" id="questionCounter">1 / 10</span>
+    </div>
+
+    <div class="statement-card">
+      <div class="statement-label">Statement</div>
+      <div class="statement-text" id="statementText"></div>
+    </div>
+
+    <div class="answer-buttons">
+      <button class="answer-btn btn-myth" id="btnMyth" onclick="selectAnswer('Myth')">
+        <span class="btn-icon">✗</span>MYTH
+      </button>
+      <button class="answer-btn btn-fact" id="btnFact" onclick="selectAnswer('Fact')">
+        <span class="btn-icon">✓</span>FACT
+      </button>
+    </div>
+
+    <div class="feedback-panel" id="feedbackPanel">
+      <div class="feedback-result"        id="feedbackResult"></div>
+      <div class="feedback-answer-reveal" id="feedbackAnswerReveal"></div>
+      <div class="feedback-explanation"   id="feedbackExplanation"></div>
+    </div>
+
+    <button class="btn-primary btn-next" id="btnNext" onclick="nextQuestion()">Next →</button>
+  </main>
+
+
+  <!-- ════════════════════════════════════════════════════════════════
+       COMPLETION SCREEN
+       Score ring, personalized message, resources from JSON,
+       and two buttons: Play Again (restart this module) and
+       Try Another (return to hub).
+       ════════════════════════════════════════════════════════════════ -->
+  <main class="screen" id="screenComplete">
+
+    <div class="avatar-row">
+      <!-- AVATAR SWAP: <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
+      <svg class="avatar-figure" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="36" cy="14" r="11" fill="#002e6d" stroke="#001a47" stroke-width="2"/>
+        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
+        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
+        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
+        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
+        <line x1="36" y1="25" x2="36" y2="58" stroke="#002e6d" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="58" x2="22" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="58" x2="50" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="22" y1="80" x2="14" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="50" y1="80" x2="58" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="avatar-bubble" id="completeSpeech">You made it! Here's how you did.</div>
+    </div>
+
+    <div class="complete-top">
+      <div class="score-ring" id="scoreRing">
+        <div class="score-inner">
+          <div class="score-number" id="scoreNumber">0</div>
+          <div class="score-denom"  id="scoreDenom">/ 10</div>
+        </div>
+      </div>
+      <div>
+        <div class="complete-title" id="completeTitle">Nice work!</div>
+        <p class="complete-msg"    id="completeMsg"></p>
+      </div>
+    </div>
+
+    <div class="resources-card">
+      <div class="resources-title">📞 Need Help or Want to Learn More?</div>
+      <div id="resourcesList"></div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: var(--text-soft); text-align: center; line-height: 1.5;">
+      Knowledge is power — share what you learned with someone today.
+    </p>
+
+    <!-- Two-button row: restart this module OR go back to hub -->
+    <div class="btn-row">
+      <button class="btn-primary btn-restart" onclick="restartActivity()">↺ Play Again</button>
+      <a class="btn-primary" href="index.html" style="text-align:center; text-decoration:none; line-height:1.2;">
+        Try Another<br><span style="font-size:0.75rem; font-weight:600;">← Home</span>
+      </a>
+    </div>
+
+    <p class="footer-credit">
+      Content sourced from the TraffickSTOP Toolkit (NW3C, 2024) and Polaris Project.<br>
+      Developed by PTK at Columbia Basin College · Pasco, WA
+    </p>
+  </main>
+
+
+  <script>
+    // ══════════════════════════════════════════════════════════════════
+    //  AVATAR EXPRESSION SYSTEM
+    //  See index.html or the previous version's comments for full docs.
+    //  Three expressions: 'thinking' | 'happy' | 'surprised'
+    // ══════════════════════════════════════════════════════════════════
+
+    const FACE = {
+      thinking: `
+        <circle cx="31" cy="13" r="1.8" fill="white"/>
+        <circle cx="41" cy="13" r="1.8" fill="white"/>
+        <circle cx="31.5" cy="13.4" r="1" fill="#0d1b2a"/>
+        <circle cx="41.5" cy="13.4" r="1" fill="#0d1b2a"/>
+        <path d="M31 19.5 Q33.5 18 36 19.5 Q38.5 21 41 19.5"
+              stroke="white" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <circle cx="46" cy="10" r="1.2" fill="white" opacity="0.5"/>
+        <circle cx="50" cy="7"  r="1.6" fill="white" opacity="0.65"/>
+        <circle cx="55" cy="4"  r="2"   fill="white" opacity="0.8"/>`,
+      happy: `
+        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
+        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
+        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
+        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>`,
+      surprised: `
+        <circle cx="31" cy="13" r="2.2" fill="white"/>
+        <circle cx="41" cy="13" r="2.2" fill="white"/>
+        <circle cx="31.5" cy="13.5" r="1.2" fill="#0d1b2a"/>
+        <circle cx="41.5" cy="13.5" r="1.2" fill="#0d1b2a"/>
+        <circle cx="31.8" cy="12.8" r="0.5" fill="white"/>
+        <circle cx="41.8" cy="12.8" r="0.5" fill="white"/>
+        <ellipse cx="36" cy="20" rx="3.5" ry="2.5" fill="white"/>
+        <path d="M31 9.5 Q31 7.5 33 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
+        <path d="M41 9.5 Q41 7.5 39 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>`
+    };
+    const ARMS = {
+      thinking: `
+        <line x1="36" y1="34" x2="20" y2="42" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="30" x2="48" y2="22" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="48" y1="22" x2="44" y2="19" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>`,
+      happy: `
+        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>`,
+      surprised: `
+        <line x1="36" y1="34" x2="18" y2="28" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="36" y1="34" x2="54" y2="28" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
+        <line x1="18" y1="28" x2="14" y2="22" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
+        <line x1="54" y1="28" x2="58" y2="22" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>`
+    };
+
+    function setAvatarExpression(expr) {
+      const f = document.getElementById('avatarFace');
+      const a = document.getElementById('avatarArms');
+      if (f) f.innerHTML = FACE[expr] || FACE.thinking;
+      if (a) a.innerHTML = ARMS[expr] || ARMS.thinking;
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  APPLICATION STATE
+    // ══════════════════════════════════════════════════════════════════
+    let activityData  = null;  // loaded from content.json
+    let resourcesData = [];
+    let questions     = [];    // sorted by question_order
+    let currentIndex  = 0;
+    let score         = 0;
+    let answered      = false;
+
+    // ══════════════════════════════════════════════════════════════════
+    //  CONTENT LOADING
+    //  Loads content.json from the same directory as this HTML file.
+    //  Must be served from a web server — fetch() blocks on file://
+    // ══════════════════════════════════════════════════════════════════
+    const CONTENT_URL = 'content.json';
+
+    async function loadContent() {
+      document.getElementById('screenLoading').style.display = 'flex';
+      document.getElementById('screenError').style.display   = 'none';
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+      try {
+        const response = await fetch(CONTENT_URL);
+        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+        const data = await response.json();
+
+        // This module uses the myth_fact activity type
+        activityData = data.activities.find(a => a.activity_type === 'myth_fact');
+        if (!activityData) throw new Error('No myth_fact activity found in content.json');
+
+        resourcesData = data.resources || [];
+        questions = [...activityData.questions].sort((a, b) => a.question_order - b.question_order);
+
+        // Populate intro from JSON metadata
+        document.getElementById('introTitle').innerHTML =
+          activityData.activity_title.replace(' vs. ', ' vs. <span>') + '</span>';
+        document.getElementById('introDesc').textContent = activityData.activity_description;
+
+        buildResourcesList();
+
+        document.getElementById('screenLoading').style.display = 'none';
+        showScreen('screenIntro');
+
+      } catch (err) {
+        console.error('Content load error:', err);
+        document.getElementById('screenLoading').style.display = 'none';
+        document.getElementById('errorMsg').textContent = `Could not load content. (${err.message})`;
+        document.getElementById('screenError').style.display = 'flex';
+      }
+    }
+
+    function buildResourcesList() {
+      const container = document.getElementById('resourcesList');
+      container.innerHTML = '';
+      resourcesData.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'resource-item';
+        div.innerHTML = `
+          <div class="resource-name">${r.resource_name}</div>
+          ${r.resource_phone ? `<div class="resource-phone">${r.resource_phone}</div>` : ''}
+          ${r.resource_url
+            ? `<div class="resource-url">${r.resource_url}</div>`
+            : '<div class="resource-url">Visit your local office for in-person support</div>'}
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  UI HELPERS
+    // ══════════════════════════════════════════════════════════════════
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    function updateProgress(fraction) {
+      document.getElementById('progressFill').style.width = (fraction * 100) + '%';
+    }
+    function refreshScorePill() {
+      document.getElementById('pillScore').textContent = score;
+      document.getElementById('pillTotal').textContent = questions.length;
+    }
+    function showScorePill(visible) {
+      document.getElementById('scorePill').classList.toggle('visible', visible);
+    }
+
+    // ══════════════════════════════════════════════════════════════════
+    //  ACTIVITY FLOW
+    // ══════════════════════════════════════════════════════════════════
+
+    /** Start from question 1 — called by "Let's Go" and "Play Again" */
+    function startActivity() {
+      currentIndex = 0;
+      score        = 0;
+      answered     = false;
+      showScorePill(true);
+      refreshScorePill();
+      loadQuestion();
+      showScreen('screenQuestion');
+    }
+
+    /** Alias used by "Play Again" button on completion screen */
+    function restartActivity() {
+      startActivity();
+    }
+
+    /** Loads the current question into the UI and resets all previous state */
+    function loadQuestion() {
+      const q  = questions[currentIndex];
+      answered = false;
+
+      document.getElementById('statementText').textContent   = q.question_text;
+      document.getElementById('questionCounter').textContent = `${currentIndex + 1} / ${questions.length}`;
+      document.getElementById('avatarSpeech').textContent    = 'Myth or Fact? Take your best guess!';
+
+      setAvatarExpression('thinking');
+
+      const btnM = document.getElementById('btnMyth');
+      const btnF = document.getElementById('btnFact');
+      btnM.disabled  = false;
+      btnF.disabled  = false;
+      btnM.className = 'answer-btn btn-myth';
+      btnF.className = 'answer-btn btn-fact';
+
+      document.getElementById('feedbackPanel').className = 'feedback-panel';
+      document.getElementById('btnNext').className       = 'btn-primary btn-next';
+
+      updateProgress(currentIndex / questions.length);
+      refreshScorePill();
+    }
+
+    /**
+     * Handles a Myth or Fact tap.
+     * @param {string} choice - 'Myth' or 'Fact'
+     */
+    function selectAnswer(choice) {
+      if (answered) return;
+      answered = true;
+
+      const q             = questions[currentIndex];
+      const correctOption = q.answer_options.find(o => o.correct_answer === true);
+      const chosenOption  = q.answer_options.find(o => o.answer_option === choice);
+      const isCorrect     = chosenOption && chosenOption.correct_answer === true;
+
+      if (isCorrect) score++;
+
+      const btnM = document.getElementById('btnMyth');
+      const btnF = document.getElementById('btnFact');
+      btnM.disabled = true;
+      btnF.disabled = true;
+
+      // Style chosen button
+      const chosenBtn = (choice === 'Myth') ? btnM : btnF;
+      chosenBtn.className = 'answer-btn ' +
+        (choice === 'Myth' ? 'btn-myth' : 'btn-fact') +
+        (isCorrect ? ' btn-selected-correct' : ' btn-selected-wrong');
+
+      // If wrong, highlight the correct button after a short pause
+      if (!isCorrect) {
+        const correctBtn = (correctOption.answer_option === 'Myth') ? btnM : btnF;
+        setTimeout(() => {
+          correctBtn.className = 'answer-btn ' +
+            (correctOption.answer_option === 'Myth' ? 'btn-myth' : 'btn-fact') +
+            ' btn-reveal-correct';
+        }, 350);
+      }
+
+      // Avatar expression + speech
+      setAvatarExpression(isCorrect ? 'happy' : 'surprised');
+      document.getElementById('avatarSpeech').textContent = isCorrect
+        ? q.avatar_speech_correct
+        : q.avatar_speech_wrong;
+
+      // Feedback panel — wrong uses warm amber (not red), intentional
+      const feedbackText = chosenOption ? chosenOption.feedback_text : correctOption.feedback_text;
+      const fp = document.getElementById('feedbackPanel');
+      fp.className = 'feedback-panel show ' + (isCorrect ? 'correct' : 'wrong');
+      document.getElementById('feedbackResult').textContent =
+        isCorrect ? '✓ Correct!' : '🔍 Interesting — here\'s the real story:';
+      document.getElementById('feedbackAnswerReveal').textContent = isCorrect
+        ? `This is indeed a ${correctOption.answer_option.toUpperCase()}.`
+        : `This is actually a ${correctOption.answer_option.toUpperCase()}.`;
+      document.getElementById('feedbackExplanation').textContent = feedbackText;
+
+      refreshScorePill();
+
+      const isLast = (currentIndex === questions.length - 1);
+      const nextBtn = document.getElementById('btnNext');
+      nextBtn.className   = 'btn-primary btn-next show';
+      nextBtn.textContent = isLast ? 'See My Score →' : 'Next →';
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex >= questions.length) {
+        showResults();
+      } else {
+        loadQuestion();
+      }
+    }
+
+    /** Populates and shows the completion screen */
+    function showResults() {
+      showScreen('screenComplete');
+      updateProgress(1);
+      showScorePill(false);
+
+      const total = questions.length;
+      const pct   = Math.round((score / total) * 100);
+
+      document.getElementById('scoreNumber').textContent = score;
+      document.getElementById('scoreDenom').textContent  = `/ ${total}`;
+      document.getElementById('scoreRing').style.setProperty('--pct', pct + '%');
+
+      let title, msg, speech;
+      if (score === total) {
+        title  = 'Perfect Score! 🎉';
+        msg    = 'You really know your stuff. Awareness like yours makes a real difference.';
+        speech = 'Wow, perfect! You\'re ready to spread the word!';
+      } else if (pct >= 70) {
+        title  = 'Great Job! 👏';
+        msg    = "You're more aware than most. Check the resources below to keep learning.";
+        speech = 'Really solid! A few surprising ones in there, right?';
+      } else if (pct >= 50) {
+        title  = 'Good Start!';
+        msg    = 'Human trafficking is full of myths. Now you know a few more facts.';
+        speech = "Not bad! There's always more to learn — and now you know more!";
+      } else {
+        title  = 'Eye-opening!';
+        msg    = "That's exactly why this activity exists. Take a look at the real facts below.";
+        speech = 'Human trafficking is full of misconceptions. Now you know the facts!';
+      }
+
+      document.getElementById('completeTitle').textContent  = title;
+      document.getElementById('completeMsg').textContent    = msg;
+      document.getElementById('completeSpeech').textContent = speech;
+    }
+
+    // Boot: load content as soon as the page is ready
+    loadContent();
+  </script>
+
+</body>
+</html>
