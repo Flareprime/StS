@@ -217,6 +217,140 @@
           "avatar_speech_wrong": "Under federal law, minors are automatically victims — no need to prove force."
         }
       ]
+    },
+    {
+      "activity_id": 2,
+      "activity_type": "safe_or_sus",
+      "activity_title": "Safe or Sus?",
+      "activity_description": "Healthy relationships are built on respect for boundaries. Read each scenario and decide: is this Safe, or is it Sus?",
+      "questions": [
+        {
+          "question_id": 1,
+          "question_order": 1,
+          "question_text": "Bailey and Cody have been dating for a few weeks. Cody keeps asking Bailey to send revealing photos of herself. Bailey has said no and changed the subject several times, but Cody keeps pushing, saying it would make them closer.",
+          "answer_options": [
+            {
+              "answer_id": 1,
+              "answer_option": "Safe",
+              "correct_answer": false,
+              "feedback_text": "This is sus. Bailey has already said no, more than once. Repeated pressure after a boundary has been set isn't okay, no matter how it's framed. This touches digital, physical, and emotional boundaries all at once. Sharing explicit images between minors is also illegal in most states, even if both people agree to it."
+            },
+            {
+              "answer_id": 2,
+              "answer_option": "Sus",
+              "correct_answer": true,
+              "feedback_text": "This is sus. Bailey has already said no, more than once. Repeated pressure after a boundary has been set isn't okay, no matter how it's framed. This touches digital, physical, and emotional boundaries all at once. Sharing explicit images between minors is also illegal in most states, even if both people agree to it."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — a 'no' that keeps getting ignored is a red flag, not romance.",
+          "avatar_speech_wrong": "Actually, this one's sus. Repeated pressure after a 'no' is a boundary violation."
+        },
+        {
+          "question_id": 2,
+          "question_order": 2,
+          "question_text": "Parker asked Noor out, and she said no but offered to hang out in group settings. Parker keeps asking her out anyway, sometimes in front of friends, and tags her in social media posts hoping she'll respond. Noor has started avoiding events where Parker might be.",
+          "answer_options": [
+            {
+              "answer_id": 3,
+              "answer_option": "Safe",
+              "correct_answer": false,
+              "feedback_text": "This is sus. Noor set a clear boundary, and even if Parker doesn't mean any harm, repeatedly asking again — especially in public or online — ignores what she said. It's an emotional boundary issue, and could become a physical one if Parker keeps not taking 'no' for an answer."
+            },
+            {
+              "answer_id": 4,
+              "answer_option": "Sus",
+              "correct_answer": true,
+              "feedback_text": "This is sus. Noor set a clear boundary, and even if Parker doesn't mean any harm, repeatedly asking again — especially in public or online — ignores what she said. It's an emotional boundary issue, and could become a physical one if Parker keeps not taking 'no' for an answer."
+            }
+          ],
+          "avatar_speech_correct": "Right — good intentions don't cancel out ignoring someone's 'no.'",
+          "avatar_speech_wrong": "Actually, this is sus. Persisting after a clear 'no' crosses a boundary, even unintentionally."
+        },
+        {
+          "question_id": 3,
+          "question_order": 3,
+          "question_text": "Priya made the jazz band and now has less free time for her best friend Sophie. When Priya's new bandmates invite her to lunch, she asks if Sophie can join too, so Sophie won't feel left out.",
+          "answer_options": [
+            {
+              "answer_id": 5,
+              "answer_option": "Safe",
+              "correct_answer": true,
+              "feedback_text": "This is safe! Priya is balancing her new interests with her existing friendship, and including Sophie shows she values that relationship. Healthy relationships can grow to include new people without anyone being pushed out."
+            },
+            {
+              "answer_id": 6,
+              "answer_option": "Sus",
+              "correct_answer": false,
+              "feedback_text": "This is safe! Priya is balancing her new interests with her existing friendship, and including Sophie shows she values that relationship. Healthy relationships can grow to include new people without anyone being pushed out."
+            }
+          ],
+          "avatar_speech_correct": "Yep — making room for old friends in new spaces is a healthy move.",
+          "avatar_speech_wrong": "Actually, this one's safe. Priya is including her friend, not pushing her out."
+        },
+        {
+          "question_id": 4,
+          "question_order": 4,
+          "question_text": "Avery is part of the LGBTQ+ community and sometimes deals with unsupportive comments from family. Avery talks to online friends about it for support. One of those friends suggests Avery run away from home, and even suggests responding to the unkind family member with violence.",
+          "answer_options": [
+            {
+              "answer_id": 7,
+              "answer_option": "Safe",
+              "correct_answer": false,
+              "feedback_text": "This is sus. Even if the friend means well, suggesting Avery run away or respond with violence could put Avery in real danger. This is a digital boundary situation — it's okay to tell a friend that their advice doesn't feel safe, even while appreciating that they care."
+            },
+            {
+              "answer_id": 8,
+              "answer_option": "Sus",
+              "correct_answer": true,
+              "feedback_text": "This is sus. Even if the friend means well, suggesting Avery run away or respond with violence could put Avery in real danger. This is a digital boundary situation — it's okay to tell a friend that their advice doesn't feel safe, even while appreciating that they care."
+            }
+          ],
+          "avatar_speech_correct": "Right. Advice that could put someone in more danger is sus, even from a friend.",
+          "avatar_speech_wrong": "Actually, this is sus. That advice could put Avery in more danger, not less."
+        },
+        {
+          "question_id": 5,
+          "question_order": 5,
+          "question_text": "Jay joined the soccer team and started spending more time with teammates after practice. His girlfriend Madison got upset and demanded access to his phone, threatening to break up with him if he said no. He gave in — now she regularly checks his phone and shows up unannounced wherever he is.",
+          "answer_options": [
+            {
+              "answer_id": 9,
+              "answer_option": "Safe",
+              "correct_answer": false,
+              "feedback_text": "This is sus. Threatening to end a relationship to force someone to give up their privacy is a form of manipulation. Demanding phone access and showing up uninvited crosses both digital and emotional boundaries — trust shouldn't require surveillance."
+            },
+            {
+              "answer_id": 10,
+              "answer_option": "Sus",
+              "correct_answer": true,
+              "feedback_text": "This is sus. Threatening to end a relationship to force someone to give up their privacy is a form of manipulation. Demanding phone access and showing up uninvited crosses both digital and emotional boundaries — trust shouldn't require surveillance."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — 'prove it or I'll leave' is pressure, not trust.",
+          "avatar_speech_wrong": "Actually, this is sus. Using a relationship as leverage to demand privacy access is a red flag."
+        },
+        {
+          "question_id": 6,
+          "question_order": 6,
+          "question_text": "Mike's supervisor Elsa praised his work and asked him to also take shifts at her other gas station, totaling about 65 hours a week. His paystub shows no overtime pay, he rarely gets breaks, and Elsa told him not to mention the extra hours because his coworkers might get jealous.",
+          "answer_options": [
+            {
+              "answer_id": 11,
+              "answer_option": "Safe",
+              "correct_answer": false,
+              "feedback_text": "This is sus. Not paying required overtime, denying breaks, and asking an employee to keep quiet about it are signs of labor exploitation — a physical and emotional boundary violation. Wage theft and break violations can be reported to the Department of Labor or local law enforcement."
+            },
+            {
+              "answer_id": 12,
+              "answer_option": "Sus",
+              "correct_answer": true,
+              "feedback_text": "This is sus. Not paying required overtime, denying breaks, and asking an employee to keep quiet about it are signs of labor exploitation — a physical and emotional boundary violation. Wage theft and break violations can be reported to the Department of Labor or local law enforcement."
+            }
+          ],
+          "avatar_speech_correct": "Right — unpaid overtime plus 'don't tell anyone' is a major warning sign at work.",
+          "avatar_speech_wrong": "Actually, this is sus. No overtime pay, no breaks, and 'keep it quiet' are workplace red flags."
+        }
+      ]
     }
   ],
   "resources": [
