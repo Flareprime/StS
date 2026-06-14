@@ -215,6 +215,48 @@
           ],
           "avatar_speech_correct": "Important legal fact. Minors cannot consent to commercial sex — period.",
           "avatar_speech_wrong": "Under federal law, minors are automatically victims — no need to prove force."
+        },
+        {
+          "question_id": 11,
+          "question_order": 11,
+          "question_text": "A warning going around online says traffickers tie zip ties to car door handles in parking lots to mark vehicles belonging to potential victims.",
+          "answer_options": [
+            {
+              "answer_id": 21,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "This is a myth. Polaris reviewed National Human Trafficking Hotline data from 2015 to 2022 and found zero cases involving zip ties used this way. Viral warnings like this can distract people from real warning signs and pull attention away from the resources meant to help actual victims."
+            },
+            {
+              "answer_id": 22,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "This is a myth. Polaris reviewed National Human Trafficking Hotline data from 2015 to 2022 and found zero cases involving zip ties used this way. Viral warnings like this can distract people from real warning signs and pull attention away from the resources meant to help actual victims."
+            }
+          ],
+          "avatar_speech_correct": "Right — this one's been circulating online for years, but the data just doesn't back it up.",
+          "avatar_speech_wrong": "Actually, this is a myth. There's no evidence traffickers use zip ties to mark targets."
+        },
+        {
+          "question_id": 12,
+          "question_order": 12,
+          "question_text": "Another viral post warns that traffickers hand out drug-laced flowers or roses to women in parking lots in order to drug and abduct them.",
+          "answer_options": [
+            {
+              "answer_id": 23,
+              "answer_option": "Myth",
+              "correct_answer": true,
+              "feedback_text": "This is a myth. Polaris checked the same hotline data and found zero cases matching this story either. It's been debunked since at least 2019 but keeps resurfacing. Spreading unverified rumors like this can overwhelm services meant for real victims."
+            },
+            {
+              "answer_id": 24,
+              "answer_option": "Fact",
+              "correct_answer": false,
+              "feedback_text": "This is a myth. Polaris checked the same hotline data and found zero cases matching this story either. It's been debunked since at least 2019 but keeps resurfacing. Spreading unverified rumors like this can overwhelm services meant for real victims."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — another one that sounds plausible but doesn't hold up.",
+          "avatar_speech_wrong": "Actually, this is a myth too — no documented cases match this story."
         }
       ]
     },
