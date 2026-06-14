@@ -40,13 +40,19 @@
 const CONTENT_URL = 'content.json';
 
 /**
+ * Maximum number of questions/scenarios shown per playthrough, even if
+ * content.json contains more. Keeps activities short for booth use.
+ */
+const MAX_QUESTIONS = 10;
+
+/**
  * Fetches content.json and extracts the data for a specific activity type.
  *
- * Questions are sorted by question_order (ascending) and then shuffled
- * using the Fisher-Yates algorithm so repeat visitors at kiosk events
- * see a different order each time. The question_order field in content.json
- * still defines the canonical sequence and can be used to restore a fixed
- * order if needed in the future.
+ * Questions are sorted by question_order (ascending), shuffled using the
+ * Fisher-Yates algorithm so repeat visitors at kiosk events see a different
+ * order each time, then capped at MAX_QUESTIONS. The question_order field
+ * in content.json still defines the canonical sequence and can be used to
+ * restore a fixed order if needed in the future.
  *
  * @param {string} activityType - The activity_type value to look for in the
  *   activities array. Must match exactly: 'myth_fact' | 'scenario' |
@@ -88,18 +94,39 @@ async function loadContent(activityType) {
 
   // Sort by question_order to establish the canonical sequence,
   // then shuffle so each session is randomized.
-  const questions = [...activityData.questions]
+  const sortedQuestions = [...activityData.questions]
     .sort((a, b) => a.question_order - b.question_order);
 
-  // Fisher-Yates shuffle: iterates from the end, swapping each element
-  // with a randomly chosen element at or before its position.
-  // Result: every permutation is equally likely.
-  for (let i = questions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [questions[i], questions[j]] = [questions[j], questions[i]];
-  }
+  // Cap the number of questions per playthrough, even if content.json
+  // contains more than MAX_QUESTIONS.
+  const questions = shuffleArray(sortedQuestions).slice(0, MAX_QUESTIONS);
 
   return { activityData, questions, resources };
+}
+
+/**
+ * Fisher-Yates shuffle. Returns a new shuffled copy of the array — does not
+ * mutate the input. Iterates from the end, swapping each element with a
+ * randomly chosen element at or before its position, so every permutation
+ * is equally likely.
+ *
+ * Exported separately (in addition to being used inside loadContent) so
+ * activity modules can re-shuffle a "Play Again" round locally without
+ * re-fetching content.json:
+ *
+ *   const sorted = [...activityData.questions].sort((a, b) => a.question_order - b.question_order);
+ *   questions = shuffleArray(sorted).slice(0, MAX_QUESTIONS);
+ *
+ * @param {Array} arr - The array to shuffle.
+ * @returns {Array} A new shuffled array.
+ */
+function shuffleArray(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
 /**
@@ -109,6 +136,11 @@ async function loadContent(activityType) {
  * Clears and rebuilds the #resourcesList element each time it is called.
  * resource_phone and resource_url may be null in content.json — those lines
  * are simply omitted from the rendered output.
+ *
+ * Phone numbers in standard hyphenated format (e.g. "1-888-373-7888") are
+ * rendered as tap-to-call (tel:) links. Short codes (e.g. "Text HOME to
+ * 741741") are left as plain text since tel: links don't work for those.
+ * resource_url values are rendered as links that open in a new tab.
  *
  * @param {object[]} resources - The resources array from loadContent().
  */
@@ -121,14 +153,26 @@ function buildResourcesList(resources) {
   resources.forEach(r => {
     const div = document.createElement('div');
     div.className = 'resource-item';
+
+    // Turn phone numbers like "1-888-373-7888" into tap-to-call links.
+    // Short codes (e.g. "Text HOME to 741741") are left as plain text.
+    let phoneHtml = '';
+    if (r.resource_phone) {
+      const linked = r.resource_phone.replace(
+        /\d+-\d+-\d+(?:-\d+)?/g,
+        match => `<a href="tel:${match.replace(/-/g, '')}">${match}</a>`
+      );
+      phoneHtml = `<div class="resource-phone">${linked}</div>`;
+    }
+
+    const urlHtml = r.resource_url
+      ? `<div class="resource-url"><a href="${r.resource_url}" target="_blank" rel="noopener">${r.resource_url}</a></div>`
+      : '<div class="resource-url">Visit your local office for in-person support</div>';
+
     div.innerHTML = `
       <div class="resource-name">${r.resource_name}</div>
-      ${r.resource_phone
-        ? `<div class="resource-phone">${r.resource_phone}</div>`
-        : ''}
-      ${r.resource_url
-        ? `<div class="resource-url">${r.resource_url}</div>`
-        : '<div class="resource-url">Visit your local office for in-person support</div>'}
+      ${phoneHtml}
+      ${urlHtml}
     `;
     container.appendChild(div);
   });
