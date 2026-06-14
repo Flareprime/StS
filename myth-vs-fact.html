@@ -6,7 +6,7 @@
   ╠══════════════════════════════════════════════════════════════════════╣
   ║  PURPOSE                                                            ║
   ║  Self-contained activity module. Loads its questions and resources  ║
-  ║  from content.json (same folder). Shows a question screen with      ║
+  ║  from data/content.json. Shows a question screen with               ║
   ║  MYTH / FACT buttons, feedback after each answer, and a score       ║
   ║  screen at the end with hotline resources.                          ║
   ║                                                                     ║
@@ -15,11 +15,12 @@
   ║  ↺ Play Again button → resets score and restarts this module        ║
   ║                                                                     ║
   ║  MAINTAINER NOTES                                                   ║
-  ║  - All question content is in content.json — edit there, not here.  ║
+  ║  - All question content is in data/content.json — edit there, not   ║
+  ║    here.                                                            ║
   ║  - To swap the avatar art, search "AVATAR SWAP" in this file.       ║
   ║  - Colors are set in the :root CSS variables section.               ║
   ║  - This file must be served from a web server (GitHub Pages, etc.)  ║
-  ║    because fetch() is used to load content.json.                    ║
+  ║    because fetch() is used to load data/content.json.               ║
   ╚══════════════════════════════════════════════════════════════════════╝
 -->
 <html lang="en">
@@ -498,7 +499,7 @@
   <div class="status-screen" id="screenLoading">
     <div class="spinner"></div>
     <div class="status-title">Loading…</div>
-    <div class="status-msg">Fetching content.json</div>
+    <div class="status-msg">Fetching data/content.json</div>
   </div>
 
   <!-- ════════════════════════════════════════════════════════════════

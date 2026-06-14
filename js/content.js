@@ -19,9 +19,9 @@
  * call in try/catch and display the error screen with the error message.
  *
  * DEPENDENCIES
- * Expects content.json to be in the same directory as the HTML file
- * that loads this script. If the directory structure changes, update
- * CONTENT_URL below.
+ * Expects content.json to be in the data/ subdirectory, alongside the HTML
+ * file that loads this script (e.g. /data/content.json). If the directory
+ * structure changes, update CONTENT_URL below.
  *
  * NOTE ON fetch() AND LOCAL FILES
  * fetch() requires a web server — it does not work when opening HTML
@@ -35,9 +35,9 @@
 
 /**
  * Path to the JSON content file, relative to the HTML file loading this script.
- * Update this if you move content.json to a subdirectory.
+ * Update this if you move content.json to a different location.
  */
-const CONTENT_URL = 'content.json';
+const CONTENT_URL = 'data/content.json';
 
 /**
  * Maximum number of questions/scenarios shown per playthrough, even if
@@ -73,7 +73,7 @@ async function loadContent(activityType) {
   if (!response.ok) {
     throw new Error(
       `HTTP ${response.status}: ${response.statusText}. ` +
-      `Is content.json in the same folder as this HTML file?`
+      `Is ${CONTENT_URL} present alongside this HTML file?`
     );
   }
 
