@@ -441,6 +441,15 @@
     .resource-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); }
     .resource-phone { font-size: 0.85rem; color: var(--hawk-blue); font-weight: 600; margin-top: 2px; }
     .resource-url   { font-size: 0.78rem; color: var(--text-soft); margin-top: 1px; }
+    .resource-phone a,
+    .resource-url a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
+      word-break: break-all;
+    }
+    .resource-phone a:active,
+    .resource-url a:active { opacity: 0.6; }
 
     /* Play Again + Try Another buttons on completion screen */
     .btn-row { display: flex; gap: 10px; width: 100%; }
@@ -454,6 +463,11 @@
       text-align: center;
       line-height: 1.6;
       opacity: 0.7;
+    }
+    .footer-credit a {
+      color: inherit;
+      text-decoration: underline;
+      text-decoration-color: currentColor;
     }
   </style>
 </head>
@@ -670,112 +684,56 @@
     </div>
 
     <p class="footer-credit">
-      Content sourced from the TraffickSTOP Toolkit (NW3C, 2024) and Polaris Project.<br>
+      Content sourced from the <a href="https://www.traffickingstop.org/wp-content/uploads/2024/07/TraffickSTOP-Toolkit-2024_07.pdf" target="_blank" rel="noopener">TraffickSTOP Toolkit</a> (NW3C, 2024) and <a href="https://polarisproject.org" target="_blank" rel="noopener">Polaris Project</a>.<br>
       Developed by PTK at Columbia Basin College · Pasco, WA
     </p>
   </main>
 
 
+  <script src="js/avatar.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/content.js"></script>
   <script>
     // ══════════════════════════════════════════════════════════════════
-    //  AVATAR EXPRESSION SYSTEM
-    //  See index.html or the previous version's comments for full docs.
-    //  Three expressions: 'thinking' | 'happy' | 'surprised'
+    //  AVATAR EXPRESSION SYSTEM, SHUFFLE HELPER, AND UI HELPERS
+    //  (showScreen, updateProgress, refreshScorePill, showScorePill,
+    //  setAvatarExpression, shuffleArray) all now live in js/avatar.js
+    //  and js/ui.js / js/content.js — loaded via <script src> above.
     // ══════════════════════════════════════════════════════════════════
-
-    const FACE = {
-      thinking: `
-        <circle cx="31" cy="13" r="1.8" fill="white"/>
-        <circle cx="41" cy="13" r="1.8" fill="white"/>
-        <circle cx="31.5" cy="13.4" r="1" fill="#0d1b2a"/>
-        <circle cx="41.5" cy="13.4" r="1" fill="#0d1b2a"/>
-        <path d="M31 19.5 Q33.5 18 36 19.5 Q38.5 21 41 19.5"
-              stroke="white" stroke-width="1.6" stroke-linecap="round" fill="none"/>
-        <circle cx="46" cy="10" r="1.2" fill="white" opacity="0.5"/>
-        <circle cx="50" cy="7"  r="1.6" fill="white" opacity="0.65"/>
-        <circle cx="55" cy="4"  r="2"   fill="white" opacity="0.8"/>`,
-      happy: `
-        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
-        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
-        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
-        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>`,
-      surprised: `
-        <circle cx="31" cy="13" r="2.2" fill="white"/>
-        <circle cx="41" cy="13" r="2.2" fill="white"/>
-        <circle cx="31.5" cy="13.5" r="1.2" fill="#0d1b2a"/>
-        <circle cx="41.5" cy="13.5" r="1.2" fill="#0d1b2a"/>
-        <circle cx="31.8" cy="12.8" r="0.5" fill="white"/>
-        <circle cx="41.8" cy="12.8" r="0.5" fill="white"/>
-        <ellipse cx="36" cy="20" rx="3.5" ry="2.5" fill="white"/>
-        <path d="M31 9.5 Q31 7.5 33 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>
-        <path d="M41 9.5 Q41 7.5 39 7.5" stroke="white" stroke-width="1.3" stroke-linecap="round" fill="none"/>`
-    };
-    const ARMS = {
-      thinking: `
-        <line x1="36" y1="34" x2="20" y2="42" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="30" x2="48" y2="22" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="48" y1="22" x2="44" y2="19" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>`,
-      happy: `
-        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>`,
-      surprised: `
-        <line x1="36" y1="34" x2="18" y2="28" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="34" x2="54" y2="28" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="18" y1="28" x2="14" y2="22" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="54" y1="28" x2="58" y2="22" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>`
-    };
-
-    function setAvatarExpression(expr) {
-      const f = document.getElementById('avatarFace');
-      const a = document.getElementById('avatarArms');
-      if (f) f.innerHTML = FACE[expr] || FACE.thinking;
-      if (a) a.innerHTML = ARMS[expr] || ARMS.thinking;
-    }
 
     // ══════════════════════════════════════════════════════════════════
     //  APPLICATION STATE
     // ══════════════════════════════════════════════════════════════════
     let activityData  = null;  // loaded from content.json
     let resourcesData = [];
-    let questions     = [];    // sorted by question_order
+    let questions     = [];    // shuffled + capped, refreshed each playthrough
     let currentIndex  = 0;
     let score         = 0;
     let answered      = false;
 
     // ══════════════════════════════════════════════════════════════════
     //  CONTENT LOADING
-    //  Loads content.json from the same directory as this HTML file.
+    //  loadContent() (js/content.js) fetches content.json, sorts by
+    //  question_order, shuffles, and caps at MAX_QUESTIONS.
     //  Must be served from a web server — fetch() blocks on file://
     // ══════════════════════════════════════════════════════════════════
-    const CONTENT_URL = 'content.json';
-
-    async function loadContent() {
+    async function init() {
       document.getElementById('screenLoading').style.display = 'flex';
       document.getElementById('screenError').style.display   = 'none';
       document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
       try {
-        const response = await fetch(CONTENT_URL);
-        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-
-        const data = await response.json();
-
-        // This module uses the safe_or_sus activity type
-        activityData = data.activities.find(a => a.activity_type === 'safe_or_sus');
-        if (!activityData) throw new Error('No safe_or_sus activity found in content.json');
-
-        resourcesData = data.resources || [];
-        questions = [...activityData.questions].sort((a, b) => a.question_order - b.question_order);
+        const result = await loadContent('safe_or_sus');
+        activityData  = result.activityData;
+        resourcesData = result.resources;
+        questions     = result.questions;
 
         // Populate intro from JSON metadata
         document.getElementById('introTitle').innerHTML =
           activityData.activity_title.replace('Sus?', '<span>Sus?</span>');
         document.getElementById('introDesc').textContent = activityData.activity_description;
 
-        buildResourcesList();
+        buildResourcesList(resourcesData);
 
         document.getElementById('screenLoading').style.display = 'none';
         showScreen('screenIntro');
@@ -788,40 +746,15 @@
       }
     }
 
-    function buildResourcesList() {
-      const container = document.getElementById('resourcesList');
-      container.innerHTML = '';
-      resourcesData.forEach(r => {
-        const div = document.createElement('div');
-        div.className = 'resource-item';
-        div.innerHTML = `
-          <div class="resource-name">${r.resource_name}</div>
-          ${r.resource_phone ? `<div class="resource-phone">${r.resource_phone}</div>` : ''}
-          ${r.resource_url
-            ? `<div class="resource-url">${r.resource_url}</div>`
-            : '<div class="resource-url">Visit your local office for in-person support</div>'}
-        `;
-        container.appendChild(div);
-      });
-    }
-
-    // ══════════════════════════════════════════════════════════════════
-    //  UI HELPERS
-    // ══════════════════════════════════════════════════════════════════
-    function showScreen(id) {
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    function updateProgress(fraction) {
-      document.getElementById('progressFill').style.width = (fraction * 100) + '%';
-    }
-    function refreshScorePill() {
-      document.getElementById('pillScore').textContent = score;
-      document.getElementById('pillTotal').textContent = questions.length;
-    }
-    function showScorePill(visible) {
-      document.getElementById('scorePill').classList.toggle('visible', visible);
+    /**
+     * Re-shuffles activityData's questions and caps at MAX_QUESTIONS,
+     * without re-fetching content.json. Used at the start of each
+     * playthrough so "Play Again" gets a fresh order.
+     */
+    function getShuffledQuestions() {
+      const sorted = [...activityData.questions]
+        .sort((a, b) => a.question_order - b.question_order);
+      return shuffleArray(sorted).slice(0, MAX_QUESTIONS);
     }
 
     // ══════════════════════════════════════════════════════════════════
@@ -830,11 +763,12 @@
 
     /** Start from question 1 — called by "Let's Go" and "Play Again" */
     function startActivity() {
+      questions    = getShuffledQuestions();
       currentIndex = 0;
       score        = 0;
       answered     = false;
       showScorePill(true);
-      refreshScorePill();
+      refreshScorePill(score, questions.length);
       loadQuestion();
       showScreen('screenQuestion');
     }
@@ -866,7 +800,7 @@
       document.getElementById('btnNext').className       = 'btn-primary btn-next';
 
       updateProgress(currentIndex / questions.length);
-      refreshScorePill();
+      refreshScorePill(score, questions.length);
     }
 
     /**
@@ -922,7 +856,7 @@
         : `This is actually ${correctOption.answer_option.toUpperCase()}.`;
       document.getElementById('feedbackExplanation').textContent = feedbackText;
 
-      refreshScorePill();
+      refreshScorePill(score, questions.length);
 
       const isLast = (currentIndex === questions.length - 1);
       const nextBtn = document.getElementById('btnNext');
@@ -977,7 +911,7 @@
     }
 
     // Boot: load content as soon as the page is ready
-    loadContent();
+    init();
   </script>
 
 </body>
