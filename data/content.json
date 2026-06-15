@@ -575,8 +575,8 @@
     {
       "resource_id": 3,
       "resource_name": "SARC (Sexual Assault Resource Center)",
-      "resource_url": null,
-      "resource_phone": null
+      "resource_url": "https://supportadvocacyresourcecenter.org",
+      "resource_phone": "1-509-374-5391"
     }
   ]
 }

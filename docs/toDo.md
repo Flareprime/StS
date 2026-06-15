@@ -38,7 +38,7 @@ GitHub Pages deployment
 - Add version log entry for Safe or Sus module + tappable resource links
 - Document shared shuffle pattern (Fisher-Yates shuffle, MAX_QUESTIONS=10 cap) in Software Architecture — applies to all activity modules, not just Myth vs Fact / Safe or Sus
 - Add note on content.json editability: content authors can add/edit/remove questions, scenarios, and resources directly in content.json with no code changes; question_order sets the base order, which is then shuffled and capped at 10 per playthrough
-
+- excel sheet
 ## DONE
 
 VS Code setup
