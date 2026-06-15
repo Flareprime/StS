@@ -1,30 +1,28 @@
 <!DOCTYPE html>
 <!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║  SPOT THE SIGNS — Get Help & Learn More                             ║
-  ║  resources.html                                                     ║
-  ╠══════════════════════════════════════════════════════════════════════╣
-  ║  PURPOSE                                                            ║
-  ║  Static (non-quiz) resource module. Loads hotline/org info from     ║
-  ║  data/content.json (top-level "resources" array — the same array    ║
-  ║  used on every activity's completion screen) via buildResourcesList ║
-  ║  in js/content.js. Also includes a "build your own resource map"    ║
-  ║  reflection card and links to learn more.                           ║
-  ║                                                                     ║
-  ║  NAVIGATION                                                         ║
-  ║  ← Home button in header → returns to index.html                   ║
-  ║  No score pill / progress bar — this is not a scored activity.      ║
-  ║                                                                     ║
-  ║  MAINTAINER NOTES                                                   ║
-  ║  - To add/edit hotlines or orgs, edit the "resources" array in       ║
-  ║    data/content.json — this page re-renders automatically. No code  ║
-  ║    changes needed.                                                   ║
-  ║  - resource_phone supports tap-to-call (tel:) for numbers in         ║
-  ║    1-888-373-7888 style; short codes ("Text HOME to 741741") are     ║
-  ║    left as plain text.                                               ║
-  ║  - This file must be served from a web server (GitHub Pages, etc.)  ║
-  ║    because fetch() is used to load data/content.json.               ║
-  ╚══════════════════════════════════════════════════════════════════════╝
+  SPOT THE SIGNS — Get Help & Learn More
+  resources.html
+
+  PURPOSE
+  Static (non-quiz) resource module. Loads hotline/org info from
+  data/content.json (top-level "resources" array — the same array
+  used on every activity's completion screen) via buildResourcesList
+  in js/content.js. Also includes a "build your own resource map"
+  reflection card and links to learn more.
+
+  NAVIGATION
+  ← Home button in header → returns to index.html
+  No score pill / progress bar — this is not a scored activity.
+
+  MAINTAINER NOTES
+  - To add/edit hotlines or orgs, edit the "resources" array in
+    data/content.json — this page re-renders automatically. No code
+    changes needed.
+  - resource_phone supports tap-to-call (tel:) for numbers in
+    1-888-373-7888 style; short codes ("Text HOME to 741741") are
+    left as plain text.
+  - This file must be served from a web server (GitHub Pages, etc.)
+    because fetch() is used to load data/content.json.
 -->
 <html lang="en">
 <head>
@@ -36,166 +34,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Shared styles: colors, header, screens, buttons, resources list,
+       footer, etc. Page-specific styles (resource map, learn-more
+       cards) are below in this file's own <style>. -->
+  <link rel="stylesheet" href="css/style.css">
+
   <style>
-    /* ════════════════════════════════════════════════════════════════
-       COLOR VARIABLES — CBC Brand Colors (Brand Guide, April 2020)
-       Keep in sync with index.html / other activity files.
-       ════════════════════════════════════════════════════════════════ */
-    :root {
-      --hawk-blue:           #002e6d;   /* PMS 294C — primary navy */
-      --hawk-blue-mid:       #003f96;
-      --soaring-blue:        #69b1e2;   /* PMS 292C — sky blue accent */
-      --soaring-light:       #e8f3fb;
-      --gold:                #ffbf3b;   /* PMS 136C — accent yellow/gold */
-      --gold-dark:           #e6a800;
-      --text:                #0d1b2a;
-      --text-soft:           #3a4f6a;
-      --bg:                  #f0f5fc;
-      --white:               #ffffff;
-      --shadow:              0 4px 20px rgba(0, 46, 109, 0.12);
-    }
+    /* Everything shared with other pages (colors, header, screens,
+       avatar, generic .card, resources list, buttons, footer) lives
+       in css/style.css. Below is just what's specific to this page:
+       the section-header styling on top of .card, the empty-state
+       message, the resource-map prompts, and the learn-more links. */
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── Header ─────────────────────────────────────────────────────
-       Left: ← Home. Center: page title. Right: spacer to keep the
-       title visually centered (no score pill on this page).
-    ─────────────────────────────────────────────────────────────── */
-    .app-header {
-      width: 100%;
-      background: var(--hawk-blue);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .header-title {
-      font-weight: 900;
-      font-size: 0.92rem;
-      color: var(--white);
-      letter-spacing: 0.02em;
-      text-align: center;
-      flex: 1;
-    }
-    .header-title span { color: var(--gold); }
-    .header-spacer { min-width: 70px; }
-
-    .btn-home {
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      padding: 5px 10px;
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
-      min-width: 70px;
-      display: inline-block;
-      text-align: center;
-      -webkit-tap-highlight-color: transparent;
-      transition: background 0.15s;
-    }
-    .btn-home:active { background: rgba(255,255,255,0.28); }
-
-    /* ── Screen system (loading / content / error) ─────────────────── */
-    .screen {
-      width: 100%;
-      max-width: 480px;
-      padding: 20px 16px 48px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      animation: fadeIn 0.3s ease;
-    }
-    .screen.active { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    .status-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      min-height: 60vh;
-      text-align: center;
-      padding: 32px 24px;
-      width: 100%;
-    }
-    .spinner {
-      width: 42px; height: 42px;
-      border: 4px solid var(--soaring-light);
-      border-top-color: var(--hawk-blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .status-title { font-weight: 800; font-size: 1.1rem; color: var(--hawk-blue); }
-    .status-msg   { font-size: 0.88rem; color: var(--text-soft); line-height: 1.5; max-width: 320px; }
-    .btn-retry {
-      padding: 12px 28px;
-      background: var(--hawk-blue);
-      color: var(--white);
-      border: none;
-      border-radius: 12px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-    .btn-retry:active { background: var(--hawk-blue-mid); }
-
-    /* ── Avatar + speech bubble ──────────────────────────────────── */
-    .avatar-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-      width: 100%;
-    }
-    .avatar-figure { width: 72px; height: 90px; flex-shrink: 0; }
-    .avatar-bubble {
-      background: var(--white);
-      border: 2px solid var(--soaring-blue);
-      border-radius: 16px 16px 16px 4px;
-      padding: 10px 14px;
-      font-size: 0.88rem;
-      color: var(--text);
-      line-height: 1.5;
-      box-shadow: var(--shadow);
-      flex: 1;
-    }
-
-    /* ── Generic card ───────────────────────────────────────────────
-       Used for the intro, resource map, and learn-more sections.
-    ─────────────────────────────────────────────────────────────── */
-    .card {
-      background: var(--white);
-      border-radius: 14px;
-      padding: 18px;
-      width: 100%;
-      box-shadow: var(--shadow);
-    }
     .card-title {
       font-weight: 800;
       font-size: 0.8rem;
@@ -212,33 +62,6 @@
       line-height: 1.55;
     }
 
-    .warning-note {
-      background: #fff8e1;
-      border-left: 4px solid var(--gold);
-      border-radius: 0 8px 8px 0;
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: #4a2c00;
-      width: 100%;
-      line-height: 1.5;
-    }
-
-    /* ── Resources list (hotlines / orgs from content.json) ────────── */
-    .resource-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
-    .resource-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .resource-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); }
-    .resource-phone { font-size: 0.85rem; color: var(--hawk-blue); font-weight: 600; margin-top: 2px; }
-    .resource-url   { font-size: 0.78rem; color: var(--text-soft); margin-top: 1px; }
-    .resource-phone a,
-    .resource-url a {
-      color: inherit;
-      text-decoration: underline;
-      text-decoration-color: currentColor;
-      word-break: break-all;
-    }
-    .resource-phone a:active,
-    .resource-url a:active { opacity: 0.6; }
-
     /* Empty-state message if content.json's resources array is empty */
     .resources-empty {
       font-size: 0.85rem;
@@ -246,7 +69,7 @@
       line-height: 1.5;
     }
 
-    /* ── Resource Map prompts ──────────────────────────────────────── */
+    /* Resource Map prompts */
     .map-list { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
     .map-item { display: flex; gap: 12px; align-items: flex-start; }
     .map-icon {
@@ -260,7 +83,7 @@
     .map-item-title { font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 2px; }
     .map-item-desc  { font-size: 0.82rem; color: var(--text-soft); line-height: 1.45; }
 
-    /* ── Learn More links ─────────────────────────────────────────── */
+    /* Learn More links */
     .link-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
     .link-item:last-child { border-bottom: none; padding-bottom: 0; }
     .link-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
@@ -272,46 +95,11 @@
       word-break: break-all;
     }
     .link-item a.link-url:active { opacity: 0.6; }
-
-    /* ── Back to hub button ──────────────────────────────────────── */
-    .btn-primary {
-      width: 100%;
-      padding: 16px;
-      background: var(--hawk-blue);
-      color: var(--white);
-      border: none;
-      border-radius: 14px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      display: block;
-      transition: background 0.15s, transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-primary:active { background: var(--hawk-blue-mid); transform: scale(0.98); }
-
-    .footer-credit {
-      font-size: 0.72rem;
-      color: var(--text-soft);
-      text-align: center;
-      line-height: 1.6;
-      opacity: 0.7;
-    }
-    .footer-credit a {
-      color: inherit;
-      text-decoration: underline;
-      text-decoration-color: currentColor;
-    }
   </style>
 </head>
 <body>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       HEADER — no score pill (not a scored activity)
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- HEADER - no score pill, this isn't a scored activity -->
   <header class="app-header">
     <a class="btn-home" href="index.html">← Home</a>
     <div class="header-title">GET HELP &amp; <span>LEARN MORE</span></div>
@@ -319,18 +107,14 @@
   </header>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       LOADING SCREEN
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- LOADING SCREEN -->
   <div class="status-screen" id="screenLoading">
     <div class="spinner"></div>
     <div class="status-title">Loading…</div>
     <div class="status-msg">Fetching data/content.json</div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       ERROR SCREEN
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- ERROR SCREEN -->
   <div class="status-screen" id="screenError" style="display: none;">
     <div style="font-size: 2.5rem;">⚠️</div>
     <div class="status-title">Content unavailable</div>
@@ -340,9 +124,7 @@
   </div>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       CONTENT SCREEN
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- CONTENT SCREEN -->
   <main class="screen" id="screenContent">
 
     <!-- Avatar greeting (static "happy" pose) -->
@@ -456,38 +238,50 @@
   <script src="js/ui.js"></script>
   <script src="js/content.js"></script>
   <script>
-    // ══════════════════════════════════════════════════════════════════
-    //  This page has no question flow or scoring — it just loads
-    //  data/content.json and renders the shared "resources" array via
-    //  buildResourcesList() (js/content.js), the same helper used on
-    //  every activity's completion screen.
+    // This page has no question flow or scoring - it just loads
+    // data/content.json and renders the shared "resources" array
+    // using buildResourcesList() (js/content.js), the same helper
+    // every activity's completion screen uses.
     //
-    //  CONTENT_URL and buildResourcesList() come from js/content.js.
-    //  showScreen() comes from js/ui.js.
-    // ══════════════════════════════════════════════════════════════════
-    async function init() {
-      document.getElementById('screenLoading').style.display = 'flex';
-      document.getElementById('screenError').style.display   = 'none';
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // CONTENT_URL and buildResourcesList() come from js/content.js.
+    // showScreen() comes from js/ui.js.
+    async function init()
+    {
+        // Reset to the loading state every time init() runs - this
+        // matters for the "Try Again" button on the error screen,
+        // which calls init() again.
+        document.getElementById('screenLoading').style.display = 'flex';
+        document.getElementById('screenError').style.display   = 'none';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
-      try {
-        const response = await fetch(CONTENT_URL + '?v=' + Date.now());
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        try
+        {
+            // The "?v=" + Date.now() cache-busts content.json so edits
+            // show up immediately instead of using a cached copy.
+            const response = await fetch(CONTENT_URL + '?v=' + Date.now());
+
+            if (!response.ok)
+            {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            buildResourcesList(data.resources || []);
+
+            document.getElementById('screenLoading').style.display = 'none';
+            showScreen('screenContent');
         }
-
-        const data = await response.json();
-        buildResourcesList(data.resources || []);
-
-        document.getElementById('screenLoading').style.display = 'none';
-        showScreen('screenContent');
-
-      } catch (err) {
-        console.error('Content load error:', err);
-        document.getElementById('screenLoading').style.display = 'none';
-        document.getElementById('errorMsg').textContent = `Could not load resources. (${err.message})`;
-        document.getElementById('screenError').style.display = 'flex';
-      }
+        catch (err)
+        {
+            // Most likely cause: this page was opened directly from
+            // disk (file://) instead of through a web server, so
+            // fetch() was blocked. Could also mean content.json is
+            // missing or has invalid JSON.
+            console.error('Content load error:', err);
+            document.getElementById('screenLoading').style.display = 'none';
+            document.getElementById('errorMsg').textContent = `Could not load resources. (${err.message})`;
+            document.getElementById('screenError').style.display = 'flex';
+        }
     }
 
     // Boot: load content as soon as the page is ready

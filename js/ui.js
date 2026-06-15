@@ -1,90 +1,90 @@
-/**
- * ui.js
- * ─────────────────────────────────────────────────────────────────────────────
- * Shared UI helper functions for Spot the Signs.
- *
- * Provides screen switching, progress bar updates, and score pill / back
- * button visibility controls used by all activity modules.
- *
- * DEPENDENCIES
- * Expects the following element IDs to exist in the HTML that loads this file:
- *   #progressFill   — the inner div of the progress bar
- *   #scorePill      — the score display in the header
- *   #pillScore      — the current score number inside #scorePill
- *   #pillTotal      — the total questions number inside #scorePill
- *   #btnBack        — the back/home button in the header (optional)
- *
- * Not all modules use every element. Functions check for element existence
- * before acting, so missing elements don't cause errors.
- * ─────────────────────────────────────────────────────────────────────────────
- */
+// ui.js
+//
+// Shared UI helper functions for Spot the Signs.
+//
+// Small set of functions used by every activity module to switch
+// screens, move the progress bar, and show/hide the score pill and
+// back button. None of these functions hold any state of their own -
+// they just read/write the DOM each time they're called.
+//
+// EXPECTED ELEMENTS
+// The HTML that loads this script should have these elements (the IDs
+// must match exactly):
+//   #progressFill - the inner, colored part of the progress bar
+//   #scorePill    - the score badge shown in the header
+//   #pillScore    - the "current score" number inside #scorePill
+//   #pillTotal    - the "out of total" number inside #scorePill
+//   #btnBack      - the back/home button in the header (optional)
+//
+// Not every page uses every element (e.g. resources.html has no score
+// pill). Each function checks the element exists before touching it,
+// so a missing element is just silently skipped - no errors.
 
 'use strict';
 
-/**
- * Shows one screen and hides all others.
- *
- * Removes the 'active' class from every element with class 'screen',
- * then adds it to the target element. Scrolls to the top of the page
- * so the user always starts reading from the header.
- *
- * @param {string} id - The id attribute of the .screen element to show.
- */
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+// Shows one screen and hides all the others.
+//
+// Every element with class "screen" loses the "active" class, then the
+// one matching id gets "active" added back. Also scrolls the page back
+// to the top, so when the user moves to a new screen they start reading
+// from the header instead of wherever they happened to be scrolled to.
+//
+// id - the id of the .screen element to show (e.g. "screenQuestion").
+function showScreen(id)
+{
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/**
- * Updates the progress bar width to reflect how far through the activity
- * the user is.
- *
- * @param {number} fraction - A value between 0.0 (empty) and 1.0 (full).
- *   Pass 0 at the start of an activity, currentIndex/total during questions,
- *   and 1 on the completion screen.
- */
-function updateProgress(fraction) {
-  const el = document.getElementById('progressFill');
-  if (el) el.style.width = (fraction * 100) + '%';
+// Updates the progress bar's width.
+//
+// fraction - a number from 0.0 (empty) to 1.0 (full).
+//   - Pass 0 when an activity starts.
+//   - Pass currentIndex / totalQuestions while answering questions.
+//   - Pass 1 on the completion screen.
+function updateProgress(fraction)
+{
+    const el = document.getElementById('progressFill');
+    if (el) el.style.width = (fraction * 100) + '%';
 }
 
-/**
- * Updates the score pill text in the header with the current score and
- * total number of questions.
- *
- * @param {number} score  - Number of correct answers so far.
- * @param {number} total  - Total number of questions in the activity.
- */
-function refreshScorePill(score, total) {
-  const pillScore = document.getElementById('pillScore');
-  const pillTotal = document.getElementById('pillTotal');
-  if (pillScore) pillScore.textContent = score;
-  if (pillTotal) pillTotal.textContent = total;
+// Updates the numbers shown in the score pill (e.g. "3 / 10").
+//
+// score - how many questions the user has answered correctly so far.
+// total - total number of questions in this playthrough.
+function refreshScorePill(score, total)
+{
+    const pillScore = document.getElementById('pillScore');
+    const pillTotal = document.getElementById('pillTotal');
+
+    if (pillScore) pillScore.textContent = score;
+    if (pillTotal) pillTotal.textContent = total;
 }
 
-/**
- * Shows or hides the score pill in the header.
- *
- * The pill is hidden on the intro and completion screens and visible
- * during the question flow so the user can track their score live.
- *
- * @param {boolean} visible - true to show, false to hide.
- */
-function showScorePill(visible) {
-  const el = document.getElementById('scorePill');
-  if (el) el.classList.toggle('visible', visible);
+// Shows or hides the score pill in the header.
+//
+// The pill is hidden on the intro and completion screens, and shown
+// during the question flow so the user can watch their score update
+// live.
+//
+// visible - true to show the pill, false to hide it.
+function showScorePill(visible)
+{
+    const el = document.getElementById('scorePill');
+    if (el) el.classList.toggle('visible', visible);
 }
 
-/**
- * Shows or hides the back / home button in the header.
- *
- * Uses visibility:hidden (not display:none) so the button stays in the
- * layout and the centered title doesn't shift when it disappears.
- *
- * @param {boolean} visible - true to show, false to hide.
- */
-function showBackBtn(visible) {
-  const el = document.getElementById('btnBack');
-  if (el) el.classList.toggle('hidden', !visible);
+// Shows or hides the back/home button in the header.
+//
+// Uses the "hidden" class with visibility:hidden rather than
+// display:none, so the button keeps its space in the layout - that
+// way the centered title doesn't jump sideways when the button
+// disappears.
+//
+// visible - true to show the button, false to hide it.
+function showBackBtn(visible)
+{
+    const el = document.getElementById('btnBack');
+    if (el) el.classList.toggle('hidden', !visible);
 }

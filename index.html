@@ -1,26 +1,23 @@
 <!DOCTYPE html>
 <!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║  SPOT THE SIGNS — Home / Activity Hub                               ║
-  ║  index.html                                                         ║
-  ╠══════════════════════════════════════════════════════════════════════╣
-  ║  PURPOSE                                                            ║
-  ║  Landing page for the Spot the Signs awareness app. Displays the   ║
-  ║  avatar, a brief welcome, and cards linking to each activity        ║
-  ║  module. Add new module cards here as new activities are built.     ║
-  ║                                                                     ║
-  ║  ADDING A NEW ACTIVITY MODULE                                       ║
-  ║  1. Build the new module as its own HTML file (e.g. scenarios.html) ║
-  ║  2. Copy one of the .activity-card divs below                       ║
-  ║  3. Update the title, description, icon, and href to match          ║
-  ║  4. Change the card's status from "coming-soon" to "available"      ║
-  ║     and remove the <div class="badge">Coming Soon</div>             ║
-  ║                                                                     ║
-  ║  DEPLOYMENT                                                         ║
-  ║  Push all files to GitHub. GitHub Pages serves index.html           ║
-  ║  automatically when visiting the root URL — no extra config needed. ║
-  ║  QR code should point to the root URL, not index.html explicitly.   ║
-  ╚══════════════════════════════════════════════════════════════════════╝
+  SPOT THE SIGNS — Home / Activity Hub
+  index.html
+  PURPOSE
+  Landing page for the Spot the Signs awareness app. Displays the
+  avatar, a brief welcome, and cards linking to each activity
+  module. Add new module cards here as new activities are built.
+
+  ADDING A NEW ACTIVITY MODULE
+  1. Build the new module as its own HTML file (e.g. scenarios.html)
+  2. Copy one of the .activity-card divs below
+  3. Update the title, description, icon, and href to match
+  4. Change the card's status from "coming-soon" to "available"
+     and remove the <div class="badge">Coming Soon</div>
+
+  DEPLOYMENT
+  Push all files to GitHub. GitHub Pages serves index.html
+  automatically when visiting the root URL — no extra config needed.
+  QR code should point to the root URL, not index.html explicitly.
 -->
 <html lang="en">
 <head>
@@ -33,40 +30,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Shared styles: colors, avatar, cards, warning note, footer, etc.
+       live in css/style.css. index.html's header is different from
+       the activity pages (not sticky, centered title, no back/score
+       pill), so .app-header/.header-title are overridden below. -->
+  <link rel="stylesheet" href="css/style.css">
+
   <style>
-    /* ════════════════════════════════════════════════════════════════
-       COLOR VARIABLES — CBC Brand Colors (Brand Guide, April 2020)
-       Hawk Blue  #002e6d  PMS 294C — primary navy
-       Soaring Blue #69b1e2 PMS 292C — sky blue accent
-       Gold       #ffbf3b  PMS 136C — accent yellow/gold
-       ════════════════════════════════════════════════════════════════ */
-    :root {
-      --hawk-blue:     #002e6d;
-      --hawk-blue-mid: #003f96;
-      --soaring-blue:  #69b1e2;
-      --soaring-light: #e8f3fb;
-      --gold:          #ffbf3b;
-      --gold-dark:     #e6a800;
-      --text:          #0d1b2a;
-      --text-soft:     #3a4f6a;
-      --bg:            #f0f5fc;
-      --white:         #ffffff;
-      --shadow:        0 4px 20px rgba(0, 46, 109, 0.12);
-    }
+    /* Color variables, the page reset, and body styling live in
+       css/style.css. Below is everything specific to the home page:
+       the header override, the avatar/welcome cards, activity cards,
+       and section heading. */
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ── Header ─────────────────────────────────────────────────── */
+    /* Header override - index.html's header is centered and not
+       sticky, unlike the activity pages' header in css/style.css. */
     .app-header {
       width: 100%;
       background: var(--hawk-blue);
@@ -91,7 +68,7 @@
       background: var(--gold);
     }
 
-    /* ── Page content wrapper ────────────────────────────────────── */
+    /* Page content wrapper */
     .page {
       width: 100%;
       max-width: 480px;
@@ -102,30 +79,9 @@
       gap: 20px;
     }
 
-    /* ── Avatar + speech bubble ──────────────────────────────────── */
-    .avatar-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-      width: 100%;
-      margin-top: 4px;
-    }
-    .avatar-figure { width: 72px; height: 90px; flex-shrink: 0; }
-    .avatar-bubble {
-      background: var(--white);
-      border: 2px solid var(--soaring-blue);
-      border-radius: 16px 16px 16px 4px;
-      padding: 10px 14px;
-      font-size: 0.88rem;
-      color: var(--text);
-      line-height: 1.5;
-      box-shadow: var(--shadow);
-      flex: 1;
-    }
-
-    /* ── Welcome card ─────────────────────────────────────────────
+    /* Welcome card
        Explains what the app is and why it exists.
-    ─────────────────────────────────────────────────────────────── */
+    */
     .welcome-card {
       background: var(--hawk-blue);
       border-radius: 16px;
@@ -147,7 +103,7 @@
       opacity: 0.88;
     }
 
-    /* ── Section heading ─────────────────────────────────────────── */
+    /* Section heading */
     .section-heading {
       width: 100%;
       font-weight: 800;
@@ -167,19 +123,19 @@
       opacity: 0.4;
     }
 
-    /* ── Activity cards ──────────────────────────────────────────
+    /* Activity cards
        Each card links to one activity module.
 
        States:
-         .available    — fully built, tappable link
-         .coming-soon  — not yet built, visually muted, not a link
+       .available    — fully built, tappable link
+       .coming-soon  — not yet built, visually muted, not a link
 
        TO ADD A NEW MODULE:
-         Copy the entire <a class="activity-card coming-soon"> block,
-         change it to <a class="activity-card available" href="yourfile.html">,
-         update the icon, title, description, and detail fields,
-         and remove the .badge div.
-    ─────────────────────────────────────────────────────────────── */
+       Copy the entire <a class="activity-card coming-soon"> block,
+       change it to <a class="activity-card available" href="yourfile.html">,
+       update the icon, title, description, and detail fields,
+       and remove the .badge div.
+    */
     .activity-card {
       display: flex;
       align-items: center;
@@ -268,26 +224,6 @@
       border: 1px solid var(--soaring-blue);
     }
 
-    /* ── Warning note ─────────────────────────────────────────────── */
-    .warning-note {
-      background: #fff8e1;
-      border-left: 4px solid var(--gold);
-      border-radius: 0 8px 8px 0;
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: #4a2c00;
-      width: 100%;
-      line-height: 1.5;
-    }
-
-    /* ── Footer credit ────────────────────────────────────────────── */
-    .footer-credit {
-      font-size: 0.72rem;
-      color: var(--text-soft);
-      text-align: center;
-      line-height: 1.6;
-      opacity: 0.7;
-    }
   </style>
 </head>
 <body>
@@ -340,10 +276,10 @@
       ⚠️ These activities cover sensitive topics. Take a breath anytime you need one.
     </div>
 
-    <!-- ── Activity cards ──────────────────────────────────────────
-         Add new module cards here as you build them.
-         See the file header comments for step-by-step instructions.
-    ─────────────────────────────────────────────────────────────── -->
+    <!-- Activity cards
+       Add new module cards here as you build them.
+       See the file header comments for step-by-step instructions.
+    -->
     <div class="section-heading">Choose an Activity</div>
 
     <!-- AVAILABLE: Myth vs. Fact -->
@@ -385,8 +321,9 @@
       <div class="card-arrow">›</div>
     </a>
 
-    <!-- AVAILABLE: Get Help & Learn More (Resources) -->
-    <a class="activity-card available" href="resources.html">
+    <!-- COMING SOON: Resources -->
+    <div class="activity-card coming-soon">
+      <div class="badge">Coming Soon</div>
       <div class="card-icon">📞</div>
       <div class="card-body">
         <div class="card-title">Get Help & Learn More</div>
@@ -396,7 +333,7 @@
         <div class="card-detail">Resource guide</div>
       </div>
       <div class="card-arrow">›</div>
-    </a>
+    </div>
 
     <p class="footer-credit">
       Content sourced from the TraffickSTOP Toolkit (NW3C, 2024) and Polaris Project.<br>

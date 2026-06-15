@@ -1,31 +1,29 @@
 <!DOCTYPE html>
 <!--
-  ╔══════════════════════════════════════════════════════════════════════╗
-  ║  SPOT THE SIGNS — Stop Sign Situations Activity                     ║
-  ║  scenarios.html                                                     ║
-  ╠══════════════════════════════════════════════════════════════════════╣
-  ║  PURPOSE                                                            ║
-  ║  Self-contained activity module. Loads its scenarios and resources  ║
-  ║  from data/content.json (activity_type: "scenario"). Shows a        ║
-  ║  scenario + question, four multiple-choice answer buttons,          ║
-  ║  feedback after each answer, and a score screen at the end with     ║
-  ║  hotline resources.                                                  ║
-  ║                                                                     ║
-  ║  NAVIGATION                                                         ║
-  ║  ← Home button in header → returns to index.html                   ║
-  ║  ↺ Play Again button → resets score and restarts this module        ║
-  ║                                                                     ║
-  ║  MAINTAINER NOTES                                                   ║
-  ║  - All question content is in data/content.json — edit there, not   ║
-  ║    here. Each question's question_text contains the full scenario   ║
-  ║    narrative AND the question being asked about it. answer_options  ║
-  ║    can hold 2-4 choices; this page renders them as a vertical list   ║
-  ║    of lettered buttons (A, B, C, D...).                             ║
-  ║  - To swap the avatar art, search "AVATAR SWAP" in this file.       ║
-  ║  - Colors are set in the :root CSS variables section.               ║
-  ║  - This file must be served from a web server (GitHub Pages, etc.)  ║
-  ║    because fetch() is used to load data/content.json.               ║
-  ╚══════════════════════════════════════════════════════════════════════╝
+  SPOT THE SIGNS — Stop Sign Situations Activity
+  scenarios.html
+
+  PURPOSE
+  Self-contained activity module. Loads its scenarios and resources
+  from data/content.json (activity_type: "scenario"). Shows a
+  scenario + question, four multiple-choice answer buttons,
+  feedback after each answer, and a score screen at the end with
+  hotline resources.
+
+  NAVIGATION
+  ← Home button in header → returns to index.html
+  ↺ Play Again button → resets score and restarts this module
+
+  MAINTAINER NOTES
+  - All question content is in data/content.json — edit there, not
+    here. Each question's question_text contains the full scenario
+    narrative AND the question being asked about it. answer_options
+    can hold 2-4 choices; this page renders them as a vertical list
+    of lettered buttons (A, B, C, D...).
+  - To swap the avatar art, search "AVATAR SWAP" in this file.
+  - Colors are set in the :root CSS variables section.
+  - This file must be served from a web server (GitHub Pages, etc.)
+    because fetch() is used to load data/content.json.
 -->
 <html lang="en">
 <head>
@@ -37,210 +35,19 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
+  <!-- Shared styles: colors, header, screens, buttons, resources list,
+       footer, etc. Page-specific styles (question layout, answer
+       buttons, feedback panel) are below in this file's own <style>. -->
+  <link rel="stylesheet" href="css/style.css">
+
   <style>
-    /* ════════════════════════════════════════════════════════════════
-       COLOR VARIABLES — CBC Brand Colors (Brand Guide, April 2020)
-       Keep in sync with index.html if you change these.
-       ════════════════════════════════════════════════════════════════ */
-    :root {
-      --hawk-blue:           #002e6d;   /* PMS 294C — primary navy */
-      --hawk-blue-mid:       #003f96;   /* slightly lighter, hover states */
-      --soaring-blue:        #69b1e2;   /* PMS 292C — sky blue accent */
-      --soaring-light:       #e8f3fb;   /* very light blue, card backgrounds */
-      --gold:                #ffbf3b;   /* PMS 136C — accent yellow/gold */
-      --gold-dark:           #e6a800;   /* darker gold, hover/active */
-      --correct-green:       #2e7d32;   /* feedback: correct answer */
-      --correct-green-light: #e8f5e9;
-      --wrong-amber:         #e65100;   /* feedback: wrong answer (warm, not red) */
-      --wrong-amber-light:   #fff8e1;
-      --text:                #0d1b2a;
-      --text-soft:           #3a4f6a;
-      --bg:                  #f0f5fc;
-      --white:               #ffffff;
-      --shadow:              0 4px 20px rgba(0, 46, 109, 0.12);
-    }
+    /* Everything shared with other pages (colors, header, screens,
+       avatar, cards, buttons, resources list, footer) lives in
+       css/style.css. Below is just what's specific to the Stop Sign
+       Situations activity: the intro steps list, the situation card,
+       the multiple-choice options list, and the feedback panel. */
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       HEADER
-       Left: ← Home (link back to index.html)
-       Center: module name
-       Right: live score pill (hidden until activity starts)
-       ════════════════════════════════════════════════════════════════ */
-    .app-header {
-      width: 100%;
-      background: var(--hawk-blue);
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .header-title {
-      font-weight: 900;
-      font-size: 0.92rem;
-      color: var(--white);
-      letter-spacing: 0.02em;
-      text-align: center;
-      flex: 1;
-    }
-    .header-title span { color: var(--gold); }
-
-    /* ← Home button: always links back to index.html */
-    .btn-home {
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.3);
-      border-radius: 8px;
-      padding: 5px 10px;
-      color: var(--white);
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      font-size: 0.75rem;
-      cursor: pointer;
-      text-decoration: none;
-      white-space: nowrap;
-      min-width: 70px;
-      display: inline-block;
-      text-align: center;
-      -webkit-tap-highlight-color: transparent;
-      transition: background 0.15s;
-    }
-    .btn-home:active { background: rgba(255,255,255,0.28); }
-
-    /* Score pill (top-right): hidden until activity starts */
-    .score-pill {
-      background: rgba(255,255,255,0.15);
-      border: 1.5px solid rgba(255,255,255,0.35);
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-weight: 800;
-      font-size: 0.82rem;
-      color: var(--white);
-      display: none;
-      align-items: center;
-      gap: 4px;
-      min-width: 70px;
-      justify-content: center;
-    }
-    .score-pill.visible { display: flex; }
-    .score-pill .pill-label { opacity: 0.7; font-size: 0.7rem; font-weight: 600; }
-
-    /* ════════════════════════════════════════════════════════════════
-       PROGRESS BAR
-       Fills left-to-right as user advances through questions.
-       Width controlled by JS: updateProgress(fraction)
-       ════════════════════════════════════════════════════════════════ */
-    .progress-wrap { width: 100%; background: rgba(0,0,0,0.1); height: 5px; }
-    .progress-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
-
-    /* ════════════════════════════════════════════════════════════════
-       SCREEN SYSTEM
-       Only one .screen is visible at a time.
-       showScreen(id) swaps the .active class.
-       ════════════════════════════════════════════════════════════════ */
-    .screen {
-      width: 100%;
-      max-width: 480px;
-      padding: 20px 16px 48px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      animation: fadeIn 0.3s ease;
-    }
-    .screen.active { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       LOADING & ERROR STATES
-       Shown before content.json loads, or if it fails.
-       ════════════════════════════════════════════════════════════════ */
-    .status-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      min-height: 60vh;
-      text-align: center;
-      padding: 32px 24px;
-      width: 100%;
-    }
-    .spinner {
-      width: 42px; height: 42px;
-      border: 4px solid var(--soaring-light);
-      border-top-color: var(--hawk-blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .status-title { font-weight: 800; font-size: 1.1rem; color: var(--hawk-blue); }
-    .status-msg   { font-size: 0.88rem; color: var(--text-soft); line-height: 1.5; max-width: 320px; }
-    .btn-retry {
-      padding: 12px 28px;
-      background: var(--hawk-blue);
-      color: var(--white);
-      border: none;
-      border-radius: 12px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 0.95rem;
-      cursor: pointer;
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       AVATAR + SPEECH BUBBLE
-       AVATAR SWAP: Replace the <svg> elements with <img> tags when
-       real artwork is available. See note on each svg below.
-       ════════════════════════════════════════════════════════════════ */
-    .avatar-row {
-      display: flex;
-      align-items: flex-end;
-      gap: 12px;
-      width: 100%;
-      margin-top: 4px;
-    }
-    .avatar-figure { width: 72px; height: 90px; flex-shrink: 0; }
-    .avatar-bubble {
-      background: var(--white);
-      border: 2px solid var(--soaring-blue);
-      border-radius: 16px 16px 16px 4px;
-      padding: 10px 14px;
-      font-size: 0.88rem;
-      color: var(--text);
-      line-height: 1.45;
-      box-shadow: var(--shadow);
-      flex: 1;
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       INTRO SCREEN ELEMENTS
-       ════════════════════════════════════════════════════════════════ */
-    .card {
-      background: var(--white);
-      border-radius: 16px;
-      padding: 20px;
-      width: 100%;
-      box-shadow: var(--shadow);
-    }
+    /* INTRO SCREEN ELEMENTS */
     .intro-title {
       font-weight: 900;
       font-size: 1.55rem;
@@ -274,20 +81,7 @@
       flex-shrink: 0;
     }
 
-    .warning-note {
-      background: var(--wrong-amber-light);
-      border-left: 4px solid var(--gold);
-      border-radius: 0 8px 8px 0;
-      padding: 10px 14px;
-      font-size: 0.8rem;
-      color: #4a2c00;
-      width: 100%;
-      line-height: 1.5;
-    }
-
-    /* ════════════════════════════════════════════════════════════════
-       QUESTION SCREEN ELEMENTS
-       ════════════════════════════════════════════════════════════════ */
+    /* QUESTION SCREEN ELEMENTS */
     .q-header {
       display: flex;
       justify-content: space-between;
@@ -325,11 +119,11 @@
       color: var(--text);
     }
 
-    /* ── Multiple-choice answer buttons ───────────────────────────────
+    /* Multiple-choice answer buttons
        Vertical list of lettered options (A, B, C, D...).
        Replaces the side-by-side SAFE/SUS layout used in safe-or-sus.html
        since Stop Sign Situations needs 2-4 choices per question.
-    ─────────────────────────────────────────────────────────────────── */
+    */
     .options-list {
       display: flex;
       flex-direction: column;
@@ -409,15 +203,9 @@
     }
     .option-btn.option-dim { opacity: 0.55; }
 
-    @keyframes shake {
-      0%,100% { transform: translateX(0); }
-      25%      { transform: translateX(-5px); }
-      75%      { transform: translateX(5px); }
-    }
-
-    /* ── Feedback panel ─────────────────────────────────────────────
+    /* Feedback panel
        Wrong = warm amber, not red. Intentional — avoids negativity.
-    ─────────────────────────────────────────────────────────────── */
+    */
     .feedback-panel { width: 100%; border-radius: 12px; padding: 16px; display: none; animation: fadeIn 0.25s ease; }
     .feedback-panel.show    { display: block; }
     .feedback-panel.correct { background: var(--correct-green-light); border: 2px solid var(--correct-green); }
@@ -426,113 +214,14 @@
     .feedback-panel.correct .feedback-result { color: var(--correct-green); }
     .feedback-panel.wrong   .feedback-result { color: var(--wrong-amber); }
     .feedback-explanation   { font-size: 0.88rem; line-height: 1.55; color: var(--text); }
-
-    /* ── Primary / Next button ────────────────────────────────────── */
-    .btn-primary {
-      width: 100%;
-      padding: 16px;
-      background: var(--hawk-blue);
-      color: var(--white);
-      border: none;
-      border-radius: 14px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 800;
-      font-size: 1.05rem;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .btn-primary:active { background: var(--hawk-blue-mid); transform: scale(0.98); }
-    .btn-gold           { background: var(--gold-dark); color: var(--hawk-blue); }
-    .btn-gold:active    { background: var(--gold); }
-    .btn-next           { display: none; }
-    .btn-next.show      { display: block; }
-
-    /* ════════════════════════════════════════════════════════════════
-       COMPLETION SCREEN ELEMENTS
-       ════════════════════════════════════════════════════════════════ */
-    .complete-top {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      width: 100%;
-      background: var(--white);
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-    /* Conic gradient ring showing score percentage.
-       --pct variable set by JS: scoreRing.style.setProperty('--pct', pct+'%') */
-    .score-ring {
-      width: 110px; height: 110px;
-      border-radius: 50%;
-      background: conic-gradient(var(--hawk-blue) 0% var(--pct,0%), #d0d8e8 var(--pct,0%));
-      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
-    }
-    .score-inner {
-      width: 82px; height: 82px;
-      background: var(--white);
-      border-radius: 50%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
-    .score-number { font-weight: 900; font-size: 2rem; color: var(--hawk-blue); line-height: 1; }
-    .score-denom  { font-size: 0.72rem; color: var(--text-soft); }
-    .complete-title { font-weight: 900; font-size: 1.25rem; color: var(--hawk-blue); }
-    .complete-msg   { font-size: 0.85rem; color: var(--text-soft); margin-top: 6px; line-height: 1.5; }
-
-    .resources-card { background: var(--white); border-radius: 14px; padding: 18px; width: 100%; box-shadow: var(--shadow); }
-    .resources-title {
-      font-weight: 800;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--hawk-blue);
-      margin-bottom: 12px;
-      border-bottom: 2px solid var(--gold);
-      padding-bottom: 8px;
-    }
-    .resource-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
-    .resource-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .resource-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); }
-    .resource-phone { font-size: 0.85rem; color: var(--hawk-blue); font-weight: 600; margin-top: 2px; }
-    .resource-url   { font-size: 0.78rem; color: var(--text-soft); margin-top: 1px; }
-    .resource-phone a,
-    .resource-url a {
-      color: inherit;
-      text-decoration: underline;
-      text-decoration-color: currentColor;
-      word-break: break-all;
-    }
-    .resource-phone a:active,
-    .resource-url a:active { opacity: 0.6; }
-
-    /* Play Again + Try Another buttons on completion screen */
-    .btn-row { display: flex; gap: 10px; width: 100%; }
-    .btn-row .btn-primary { flex: 1; font-size: 0.9rem; padding: 14px 10px; }
-    .btn-restart { background: var(--gold-dark); color: var(--hawk-blue); }
-    .btn-restart:active { background: var(--gold); }
-
-    .footer-credit {
-      font-size: 0.72rem;
-      color: var(--text-soft);
-      text-align: center;
-      line-height: 1.6;
-      opacity: 0.7;
-    }
-    .footer-credit a {
-      color: inherit;
-      text-decoration: underline;
-      text-decoration-color: currentColor;
-    }
   </style>
 </head>
 <body>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       HEADER
-       ← Home always links back to index.html (never goes away).
-       Score pill appears when activity starts.
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- HEADER
+     ← Home always links back to index.html (never goes away).
+     Score pill appears when activity starts.
+  -->
   <header class="app-header">
     <a class="btn-home" href="index.html">← Home</a>
     <div class="header-title">STOP SIGN <span>SITUATIONS</span></div>
@@ -547,18 +236,14 @@
   </div>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       LOADING SCREEN
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- LOADING SCREEN -->
   <div class="status-screen" id="screenLoading">
     <div class="spinner"></div>
     <div class="status-title">Loading…</div>
     <div class="status-msg">Fetching data/content.json</div>
   </div>
 
-  <!-- ════════════════════════════════════════════════════════════════
-       ERROR SCREEN
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- ERROR SCREEN -->
   <div class="status-screen" id="screenError" style="display: none;">
     <div style="font-size: 2.5rem;">⚠️</div>
     <div class="status-title">Content unavailable</div>
@@ -568,11 +253,10 @@
   </div>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       INTRO SCREEN
-       Brief orientation before the activity starts.
-       Title and description are populated from content.json by JS.
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- INTRO SCREEN
+     Brief orientation before the activity starts.
+     Title and description are populated from content.json by JS.
+  -->
   <main class="screen" id="screenIntro">
 
     <div class="avatar-row">
@@ -621,10 +305,9 @@
   </main>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       QUESTION SCREEN
-       All content (text, counter, avatar, options, feedback) is set by JS.
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- QUESTION SCREEN
+     All content (text, counter, avatar, options, feedback) is set by JS.
+  -->
   <main class="screen" id="screenQuestion">
 
     <div class="avatar-row">
@@ -671,12 +354,11 @@
   </main>
 
 
-  <!-- ════════════════════════════════════════════════════════════════
-       COMPLETION SCREEN
-       Score ring, personalized message, resources from JSON,
-       and two buttons: Play Again (restart this module) and
-       Try Another (return to hub).
-       ════════════════════════════════════════════════════════════════ -->
+  <!-- COMPLETION SCREEN
+     Score ring, personalized message, resources from JSON,
+     and two buttons: Play Again (restart this module) and
+     Try Another (return to hub).
+  -->
   <main class="screen" id="screenComplete">
 
     <div class="avatar-row">
@@ -742,235 +424,291 @@
   <script src="js/ui.js"></script>
   <script src="js/content.js"></script>
   <script>
-    // ══════════════════════════════════════════════════════════════════
-    //  AVATAR EXPRESSION SYSTEM, SHUFFLE HELPER, AND UI HELPERS
-    //  (showScreen, updateProgress, refreshScorePill, showScorePill,
-    //  setAvatarExpression, shuffleArray) all live in js/avatar.js
-    //  and js/ui.js / js/content.js — loaded via <script src> above.
-    // ══════════════════════════════════════════════════════════════════
+    // setAvatarExpression() and FACE/ARMS templates come from
+    // js/avatar.js. showScreen, updateProgress, refreshScorePill,
+    // showScorePill, and showBackBtn come from js/ui.js.
+    // loadContent, shuffleArray, buildResourcesList, CONTENT_URL, and
+    // MAX_QUESTIONS come from js/content.js.
 
-    // ══════════════════════════════════════════════════════════════════
-    //  APPLICATION STATE
-    // ══════════════════════════════════════════════════════════════════
-    let activityData  = null;  // loaded from content.json
-    let resourcesData = [];
-    let questions     = [];    // shuffled + capped, refreshed each playthrough
-    let currentIndex  = 0;
-    let score         = 0;
-    let answered      = false;
+    // Application state - all of this gets reset/reassigned by
+    // startActivity() at the beginning of each playthrough.
+    let activityData  = null;  // the full "scenario" activity object from content.json
+    let resourcesData = [];    // hotline/org list, passed to buildResourcesList()
+    let questions     = [];    // this playthrough's shuffled + capped questions
+    let currentIndex  = 0;     // index into questions[] for the question on screen
+    let score         = 0;     // number of correct answers so far
+    let answered      = false; // true once the user has tapped an option for the current question
 
-    // Letters used for the option list (A, B, C, D, ...).
-    // Supports up to 6 options per question without code changes.
+    // Letters shown on the option buttons (A, B, C, D, ...).
+    // Supports up to 6 answer_options per question without any other
+    // code changes - if a question only has 2 options, only A and B
+    // get used.
     const OPTION_LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
 
-    // ══════════════════════════════════════════════════════════════════
-    //  CONTENT LOADING
-    //  loadContent() (js/content.js) fetches content.json, sorts by
-    //  question_order, shuffles, and caps at MAX_QUESTIONS.
-    //  Must be served from a web server — fetch() blocks on file://
-    // ══════════════════════════════════════════════════════════════════
-    async function init() {
-      document.getElementById('screenLoading').style.display = 'flex';
-      document.getElementById('screenError').style.display   = 'none';
-      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    // Fetches content.json, sorts/shuffles/caps the question list, and
+    // shows the intro screen. Called once when the page loads.
+    //
+    // Must be served from a web server - fetch() is blocked entirely
+    // when the page is opened directly from disk (file://).
+    async function init()
+    {
+        document.getElementById('screenLoading').style.display = 'flex';
+        document.getElementById('screenError').style.display   = 'none';
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
 
-      try {
-        const result = await loadContent('scenario');
-        activityData  = result.activityData;
-        resourcesData = result.resources;
-        questions     = result.questions;
+        try
+        {
+            const result = await loadContent('scenario');
+            activityData  = result.activityData;
+            resourcesData = result.resources;
+            questions     = result.questions;
 
-        // Populate intro from JSON metadata
-        document.getElementById('introTitle').innerHTML =
-          activityData.activity_title.replace('Situations', '<span>Situations</span>');
-        document.getElementById('introDesc').textContent = activityData.activity_description;
+            // Fill in the intro screen's title and description from
+            // content.json, so they can be edited there without
+            // touching this file.
+            document.getElementById('introTitle').innerHTML =
+                activityData.activity_title.replace('Situations', '<span>Situations</span>');
+            document.getElementById('introDesc').textContent = activityData.activity_description;
 
-        buildResourcesList(resourcesData);
+            buildResourcesList(resourcesData);
 
-        document.getElementById('screenLoading').style.display = 'none';
-        showScreen('screenIntro');
-
-      } catch (err) {
-        console.error('Content load error:', err);
-        document.getElementById('screenLoading').style.display = 'none';
-        document.getElementById('errorMsg').textContent = `Could not load content. (${err.message})`;
-        document.getElementById('screenError').style.display = 'flex';
-      }
+            document.getElementById('screenLoading').style.display = 'none';
+            showScreen('screenIntro');
+        }
+        catch (err)
+        {
+            // Most likely cause: this page was opened with file://
+            // instead of through a web server, so fetch() was blocked.
+            // Could also mean content.json is missing or invalid.
+            console.error('Content load error:', err);
+            document.getElementById('screenLoading').style.display = 'none';
+            document.getElementById('errorMsg').textContent = `Could not load content. (${err.message})`;
+            document.getElementById('screenError').style.display = 'flex';
+        }
     }
 
-    /**
-     * Re-shuffles activityData's questions and caps at MAX_QUESTIONS,
-     * without re-fetching content.json. Used at the start of each
-     * playthrough so "Play Again" gets a fresh order.
-     */
-    function getShuffledQuestions() {
-      const sorted = [...activityData.questions]
-        .sort((a, b) => a.question_order - b.question_order);
-      return shuffleArray(sorted).slice(0, MAX_QUESTIONS);
+    // Re-sorts and re-shuffles activityData's questions and caps the
+    // result at MAX_QUESTIONS, without re-fetching content.json.
+    //
+    // Used at the start of every playthrough (including "Play Again")
+    // so the question order is fresh each time.
+    function getShuffledQuestions()
+    {
+        const sorted = [...activityData.questions]
+            .sort((a, b) => a.question_order - b.question_order);
+
+        return shuffleArray(sorted).slice(0, MAX_QUESTIONS);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    //  ACTIVITY FLOW
-    // ══════════════════════════════════════════════════════════════════
+    // Starts (or restarts) the activity from question 1.
+    // Called by the "Let's Go" button on the intro screen, and by
+    // restartActivity() below.
+    function startActivity()
+    {
+        questions    = getShuffledQuestions();
+        currentIndex = 0;
+        score        = 0;
+        answered     = false;
 
-    /** Start from question 1 — called by "Let's Go" and "Play Again" */
-    function startActivity() {
-      questions    = getShuffledQuestions();
-      currentIndex = 0;
-      score        = 0;
-      answered     = false;
-      showScorePill(true);
-      refreshScorePill(score, questions.length);
-      loadQuestion();
-      showScreen('screenQuestion');
+        showScorePill(true);
+        refreshScorePill(score, questions.length);
+        loadQuestion();
+        showScreen('screenQuestion');
     }
 
-    /** Alias used by "Play Again" button on completion screen */
-    function restartActivity() {
-      startActivity();
+    // "Play Again" button on the completion screen calls this. It's
+    // just an alias for startActivity() - kept as its own function so
+    // the intent is clear from the onclick attribute in the HTML.
+    function restartActivity()
+    {
+        startActivity();
     }
 
-    /**
-     * Loads the current question into the UI and resets all previous state.
-     * Builds the options list dynamically — supports 2-6 answer_options
-     * per question without any HTML/CSS changes.
-     */
-    function loadQuestion() {
-      const q  = questions[currentIndex];
-      answered = false;
+    // Loads questions[currentIndex] into the UI and resets everything
+    // left over from the previous question (feedback panel, Next
+    // button, disabled options, etc).
+    //
+    // The option buttons are built fresh every time, so this supports
+    // 2-6 answer_options per question with no HTML/CSS changes needed.
+    function loadQuestion()
+    {
+        const q  = questions[currentIndex];
+        answered = false;
 
-      document.getElementById('statementText').textContent   = q.question_text;
-      document.getElementById('questionCounter').textContent = `${currentIndex + 1} / ${questions.length}`;
-      document.getElementById('avatarSpeech').textContent    = 'Stop. Look around. What do you notice here?';
+        document.getElementById('statementText').textContent   = q.question_text;
+        document.getElementById('questionCounter').textContent = `${currentIndex + 1} / ${questions.length}`;
+        document.getElementById('avatarSpeech').textContent    = 'Stop. Look around. What do you notice here?';
 
-      setAvatarExpression('thinking');
+        setAvatarExpression('thinking');
 
-      // Build the option buttons fresh for this question
-      const optionsList = document.getElementById('optionsList');
-      optionsList.innerHTML = '';
-      q.answer_options.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        btn.className = 'option-btn';
-        btn.id = `option-${i}`;
-        btn.onclick = () => selectAnswer(i);
-        btn.innerHTML = `
+        // Build the option buttons fresh for this question.
+        const optionsList = document.getElementById('optionsList');
+        optionsList.innerHTML = '';
+
+        q.answer_options.forEach((opt, i) =>
+        {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.id = `option-${i}`;
+            btn.onclick = () => selectAnswer(i);
+            btn.innerHTML = `
           <span class="option-letter">${OPTION_LETTERS[i] || (i + 1)}</span>
           <span>${opt.answer_option}</span>
         `;
-        optionsList.appendChild(btn);
-      });
+            optionsList.appendChild(btn);
+        });
 
-      document.getElementById('feedbackPanel').className = 'feedback-panel';
-      document.getElementById('btnNext').className       = 'btn-primary btn-next';
+        // Reset the feedback panel and Next button - both get shown
+        // again once the user picks an answer (see selectAnswer).
+        document.getElementById('feedbackPanel').className = 'feedback-panel';
+        document.getElementById('btnNext').className       = 'btn-primary btn-next';
 
-      updateProgress(currentIndex / questions.length);
-      refreshScorePill(score, questions.length);
+        updateProgress(currentIndex / questions.length);
+        refreshScorePill(score, questions.length);
     }
 
-    /**
-     * Handles a tap on one of the multiple-choice options.
-     * @param {number} index - Index of the chosen option in q.answer_options
-     */
-    function selectAnswer(index) {
-      if (answered) return;
-      answered = true;
+    // Handles a tap on one of the multiple-choice option buttons.
+    //
+    // index - position of the chosen option in q.answer_options.
+    function selectAnswer(index)
+    {
+        // Only the first tap counts - ignore any taps after that until
+        // the next question loads.
+        if (answered) return;
+        answered = true;
 
-      const q              = questions[currentIndex];
-      const chosenOption   = q.answer_options[index];
-      const correctIndex   = q.answer_options.findIndex(o => o.correct_answer === true);
-      const isCorrect      = chosenOption.correct_answer === true;
+        const q            = questions[currentIndex];
+        const chosenOption = q.answer_options[index];
+        const correctIndex = q.answer_options.findIndex(o => o.correct_answer === true);
+        const isCorrect    = chosenOption.correct_answer === true;
 
-      if (isCorrect) score++;
+        if (isCorrect) score++;
 
-      // Disable all options, dim the unselected ones
-      q.answer_options.forEach((opt, i) => {
-        const btn = document.getElementById(`option-${i}`);
-        btn.disabled = true;
-        if (i !== index && i !== correctIndex) {
-          btn.classList.add('option-dim');
+        // Disable every option so nothing else can be tapped, and dim
+        // the options that are neither the one chosen nor the correct
+        // answer (those two stay full-opacity so they stand out).
+        q.answer_options.forEach((opt, i) =>
+        {
+            const btn = document.getElementById(`option-${i}`);
+            btn.disabled = true;
+
+            if (i !== index && i !== correctIndex)
+            {
+                btn.classList.add('option-dim');
+            }
+        });
+
+        // Style the button the user actually tapped.
+        const chosenBtn = document.getElementById(`option-${index}`);
+        chosenBtn.classList.add(isCorrect ? 'option-selected-correct' : 'option-selected-wrong');
+
+        // If they got it wrong, highlight the correct option after a
+        // short pause - this gives the "shake"/feedback animation on
+        // the wrong choice a moment to play first.
+        if (!isCorrect)
+        {
+            setTimeout(() =>
+            {
+                document.getElementById(`option-${correctIndex}`).classList.add('option-reveal-correct');
+                document.getElementById(`option-${correctIndex}`).classList.remove('option-dim');
+            }, 350);
         }
-      });
 
-      // Style the chosen button
-      const chosenBtn = document.getElementById(`option-${index}`);
-      chosenBtn.classList.add(isCorrect ? 'option-selected-correct' : 'option-selected-wrong');
+        // Update the avatar's face/arms and speech bubble to match the
+        // result.
+        setAvatarExpression(isCorrect ? 'happy' : 'surprised');
+        document.getElementById('avatarSpeech').textContent = isCorrect
+            ? q.avatar_speech_correct
+            : q.avatar_speech_wrong;
 
-      // If wrong, reveal the correct option after a short pause
-      if (!isCorrect) {
-        setTimeout(() => {
-          document.getElementById(`option-${correctIndex}`).classList.add('option-reveal-correct');
-          document.getElementById(`option-${correctIndex}`).classList.remove('option-dim');
-        }, 350);
-      }
+        // Feedback panel uses warm amber for "wrong", not red - that's
+        // intentional, see the .feedback-panel.wrong CSS rule.
+        const fp = document.getElementById('feedbackPanel');
+        fp.className = 'feedback-panel show ' + (isCorrect ? 'correct' : 'wrong');
+        document.getElementById('feedbackResult').textContent =
+            isCorrect ? '✓ Correct!' : '🔍 Take another look:';
+        document.getElementById('feedbackExplanation').textContent = chosenOption.feedback_text;
 
-      // Avatar expression + speech
-      setAvatarExpression(isCorrect ? 'happy' : 'surprised');
-      document.getElementById('avatarSpeech').textContent = isCorrect
-        ? q.avatar_speech_correct
-        : q.avatar_speech_wrong;
+        refreshScorePill(score, questions.length);
 
-      // Feedback panel — wrong uses warm amber (not red), intentional
-      const fp = document.getElementById('feedbackPanel');
-      fp.className = 'feedback-panel show ' + (isCorrect ? 'correct' : 'wrong');
-      document.getElementById('feedbackResult').textContent =
-        isCorrect ? '✓ Correct!' : '🔍 Take another look:';
-      document.getElementById('feedbackExplanation').textContent = chosenOption.feedback_text;
-
-      refreshScorePill(score, questions.length);
-
-      const isLast = (currentIndex === questions.length - 1);
-      const nextBtn = document.getElementById('btnNext');
-      nextBtn.className   = 'btn-primary btn-next show';
-      nextBtn.textContent = isLast ? 'See My Score →' : 'Next →';
+        // Swap the Next button's label on the last question, so it's
+        // clear that tapping it goes to the results instead of another
+        // question.
+        const isLast = (currentIndex === questions.length - 1);
+        const nextBtn = document.getElementById('btnNext');
+        nextBtn.className   = 'btn-primary btn-next show';
+        nextBtn.textContent = isLast ? 'See My Score →' : 'Next →';
     }
 
-    function nextQuestion() {
-      currentIndex++;
-      if (currentIndex >= questions.length) {
-        showResults();
-      } else {
-        loadQuestion();
-      }
+    // "Next →" / "See My Score →" button handler.
+    // Moves to the next question, or shows the results screen if that
+    // was the last question.
+    function nextQuestion()
+    {
+        currentIndex++;
+
+        if (currentIndex >= questions.length)
+        {
+            showResults();
+        }
+        else
+        {
+            loadQuestion();
+        }
     }
 
-    /** Populates and shows the completion screen */
-    function showResults() {
-      showScreen('screenComplete');
-      updateProgress(1);
-      showScorePill(false);
+    // Fills in and shows the completion screen: score ring, a
+    // title/message/avatar line based on how well the user did, and
+    // the resources list (already built by init(), still on screen).
+    function showResults()
+    {
+        showScreen('screenComplete');
+        updateProgress(1);
+        showScorePill(false);
 
-      const total = questions.length;
-      const pct   = Math.round((score / total) * 100);
+        const total = questions.length;
+        const pct   = Math.round((score / total) * 100);
 
-      document.getElementById('scoreNumber').textContent = score;
-      document.getElementById('scoreDenom').textContent  = `/ ${total}`;
-      document.getElementById('scoreRing').style.setProperty('--pct', pct + '%');
+        document.getElementById('scoreNumber').textContent = score;
+        document.getElementById('scoreDenom').textContent  = `/ ${total}`;
+        document.getElementById('scoreRing').style.setProperty('--pct', pct + '%');
 
-      let title, msg, speech;
-      if (score === total) {
-        title  = 'Perfect Score! 🎉';
-        msg    = "You've got a sharp eye for warning signs. Trust that instinct — and share it with others.";
-        speech = 'Wow, perfect! You caught every stop sign.';
-      } else if (pct >= 70) {
-        title  = 'Great Job! 👏';
-        msg    = "You spotted most of the warning signs. Check the resources below to keep learning.";
-        speech = 'Nice work — a few of those were sneakier than they looked!';
-      } else if (pct >= 50) {
-        title  = 'Good Start!';
-        msg    = "Warning signs aren't always obvious, and not everything unusual is a red flag. Now you know a few more things to watch for.";
-        speech = "Not bad! There's always more to learn about spotting the signs.";
-      } else {
-        title  = 'Eye-opening!';
-        msg    = "That's exactly why this activity exists. Take another look at the explanations and the resources below.";
-        speech = 'Some of these are tricky — now you know what to look for.';
-      }
+        // Pick a title/message/avatar-speech combo based on the score
+        // band. Even the lowest band is framed as "here's why this
+        // matters" rather than "you did badly".
+        let title, msg, speech;
 
-      document.getElementById('completeTitle').textContent  = title;
-      document.getElementById('completeMsg').textContent    = msg;
-      document.getElementById('completeSpeech').textContent = speech;
+        if (score === total)
+        {
+            title  = 'Perfect Score! 🎉';
+            msg    = "You've got a sharp eye for warning signs. Trust that instinct — and share it with others.";
+            speech = 'Wow, perfect! You caught every stop sign.';
+        }
+        else if (pct >= 70)
+        {
+            title  = 'Great Job! 👏';
+            msg    = "You spotted most of the warning signs. Check the resources below to keep learning.";
+            speech = 'Nice work — a few of those were sneakier than they looked!';
+        }
+        else if (pct >= 50)
+        {
+            title  = 'Good Start!';
+            msg    = "Warning signs aren't always obvious, and not everything unusual is a red flag. Now you know a few more things to watch for.";
+            speech = "Not bad! There's always more to learn about spotting the signs.";
+        }
+        else
+        {
+            title  = 'Eye-opening!';
+            msg    = "That's exactly why this activity exists. Take another look at the explanations and the resources below.";
+            speech = 'Some of these are tricky — now you know what to look for.';
+        }
+
+        document.getElementById('completeTitle').textContent  = title;
+        document.getElementById('completeMsg').textContent    = msg;
+        document.getElementById('completeSpeech').textContent = speech;
     }
 
-    // Boot: load content as soon as the page is ready
+    // Boot: load content as soon as the page is ready.
     init();
   </script>
 

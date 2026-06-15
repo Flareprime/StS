@@ -1,0 +1,377 @@
+/* style.css
+ *
+ * Shared styles for Spot the Signs.
+ *
+ * This covers everything that's identical (or close enough to be worth
+ * unifying) across index.html, resources.html, myth-vs-fact.html,
+ * safe-or-sus.html, and scenarios.html: color variables, the page
+ * reset, header/header-title/btn-home/score-pill, the progress bar,
+ * the screen-switching system, loading/error status screens, the
+ * avatar + speech bubble, generic cards, the warning note, the
+ * resources list, primary buttons, the completion-screen score ring,
+ * and the footer credit.
+ *
+ * Anything specific to just one page (the home page's activity cards,
+ * the Myth/Fact and Safe/Sus answer buttons, the Stop Sign Situations
+ * options list, the feedback panel, the resources page's resource-map
+ * and learn-more cards, etc) stays in that page's own <style> block,
+ * loaded AFTER this file so it can override these defaults if needed.
+ */
+
+/* COLOR VARIABLES - CBC Brand Colors (Brand Guide, April 2020) */
+:root {
+    --hawk-blue:           #002e6d;   /* PMS 294C - primary navy */
+    --hawk-blue-mid:       #003f96;   /* slightly lighter, hover states */
+    --soaring-blue:        #69b1e2;   /* PMS 292C - sky blue accent */
+    --soaring-light:       #e8f3fb;   /* very light blue, card backgrounds */
+    --gold:                #ffbf3b;   /* PMS 136C - accent yellow/gold */
+    --gold-dark:           #e6a800;   /* darker gold, hover/active */
+    --correct-green:       #2e7d32;   /* feedback: correct answer */
+    --correct-green-light: #e8f5e9;
+    --wrong-amber:         #e65100;   /* feedback: wrong answer (warm, not red) */
+    --wrong-amber-light:   #fff8e1;
+    --text:                #0d1b2a;
+    --text-soft:           #3a4f6a;
+    --bg:                  #f0f5fc;
+    --white:               #ffffff;
+    --shadow:              0 4px 20px rgba(0, 46, 109, 0.12);
+}
+
+/* Reset - box-sizing everywhere, no default margin/padding. */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* HEADER
+ * Sticky bar at the top of every activity/resources page.
+ * Left: <a class="btn-home"> back to index.html.
+ * Center: .header-title (page name, with a <span> for the gold word).
+ * Right: either .score-pill (activity pages) or .header-spacer
+ * (resources.html, to keep the title visually centered).
+ *
+ * index.html overrides this with its own non-sticky, centered header -
+ * see the "Header" section in index.html's <style>.
+ */
+.app-header {
+    width: 100%;
+    background: var(--hawk-blue);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.header-title {
+    font-weight: 900;
+    font-size: 0.92rem;
+    color: var(--white);
+    letter-spacing: 0.02em;
+    text-align: center;
+    flex: 1;
+}
+.header-title span { color: var(--gold); }
+
+/* Spacer the same width as .btn-home, used on pages with no back
+ * button on the right (keeps .header-title visually centered). */
+.header-spacer { min-width: 70px; }
+
+/* <- Home button: links back to index.html */
+.btn-home {
+    background: rgba(255,255,255,0.12);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 5px 10px;
+    color: var(--white);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    min-width: 70px;
+    display: inline-block;
+    text-align: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.15s;
+}
+.btn-home:active { background: rgba(255,255,255,0.28); }
+
+/* Score pill (top-right of the header): hidden until an activity
+ * starts, then shows "current / total" and updates live. */
+.score-pill {
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-weight: 800;
+    font-size: 0.82rem;
+    color: var(--white);
+    display: none;
+    align-items: center;
+    gap: 4px;
+    min-width: 70px;
+    justify-content: center;
+}
+.score-pill.visible { display: flex; }
+.score-pill .pill-label { opacity: 0.7; font-size: 0.7rem; font-weight: 600; }
+
+/* PROGRESS BAR
+ * Thin bar under the header. Fills left-to-right as the user
+ * advances through questions. Width is set by JS: updateProgress(fraction).
+ */
+.progress-wrap { width: 100%; background: rgba(0,0,0,0.1); height: 5px; }
+.progress-fill { height: 100%; background: var(--gold); transition: width 0.5s ease; }
+
+/* SCREEN SYSTEM
+ * Only one .screen is visible at a time. showScreen(id) (js/ui.js)
+ * removes "active" from every .screen, then adds it back to the one
+ * being shown.
+ */
+.screen {
+    width: 100%;
+    max-width: 480px;
+    padding: 20px 16px 48px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: fadeIn 0.3s ease;
+}
+.screen.active { display: flex; }
+
+@keyframes fadeIn
+{
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* LOADING & ERROR STATES
+ * Shown before content.json has loaded, or if loading it failed.
+ * See init() in each page's <script> for when these are toggled.
+ */
+.status-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    min-height: 60vh;
+    text-align: center;
+    padding: 32px 24px;
+    width: 100%;
+}
+.spinner {
+    width: 42px; height: 42px;
+    border: 4px solid var(--soaring-light);
+    border-top-color: var(--hawk-blue);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.status-title { font-weight: 800; font-size: 1.1rem; color: var(--hawk-blue); }
+.status-msg   { font-size: 0.88rem; color: var(--text-soft); line-height: 1.5; max-width: 320px; }
+.btn-retry {
+    padding: 12px 28px;
+    background: var(--hawk-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+.btn-retry:active { background: var(--hawk-blue-mid); }
+
+/* AVATAR + SPEECH BUBBLE
+ * AVATAR SWAP: when real artwork replaces the SVG stick figure, see
+ * js/avatar.js - that's the only file that needs to change.
+ */
+.avatar-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    width: 100%;
+    margin-top: 4px;
+}
+.avatar-figure { width: 72px; height: 90px; flex-shrink: 0; }
+.avatar-bubble {
+    background: var(--white);
+    border: 2px solid var(--soaring-blue);
+    border-radius: 16px 16px 16px 4px;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.5;
+    box-shadow: var(--shadow);
+    flex: 1;
+}
+
+/* GENERIC CARD
+ * Plain white rounded box with the standard shadow. Used as the base
+ * for the intro screen, the resources card, the resource-map card,
+ * the learn-more card, etc. Pages add their own classes on top for
+ * anything more specific (.intro-title, .card-title, ...).
+ */
+.card {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px;
+    width: 100%;
+    box-shadow: var(--shadow);
+}
+
+/* WARNING NOTE
+ * Used for the "this topic can be heavy" / "call 911" content notes.
+ */
+.warning-note {
+    background: var(--wrong-amber-light);
+    border-left: 4px solid var(--gold);
+    border-radius: 0 8px 8px 0;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    color: #4a2c00;
+    width: 100%;
+    line-height: 1.5;
+}
+
+/* RESOURCES LIST
+ * .resources-card / .resources-title wrap the list on activity
+ * completion screens. resources.html uses the generic .card +
+ * .card-title (defined in its own <style>) for the same list instead,
+ * so .resource-item and friends are shared either way.
+ */
+.resources-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 18px;
+    width: 100%;
+    box-shadow: var(--shadow);
+}
+.resources-title {
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--hawk-blue);
+    margin-bottom: 12px;
+    border-bottom: 2px solid var(--gold);
+    padding-bottom: 8px;
+}
+.resource-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
+.resource-item:last-child { border-bottom: none; padding-bottom: 0; }
+.resource-name  { font-weight: 700; font-size: 0.9rem; color: var(--text); }
+.resource-phone { font-size: 0.85rem; color: var(--hawk-blue); font-weight: 600; margin-top: 2px; }
+.resource-url   { font-size: 0.78rem; color: var(--text-soft); margin-top: 1px; }
+.resource-phone a,
+.resource-url a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+    word-break: break-all;
+}
+.resource-phone a:active,
+.resource-url a:active { opacity: 0.6; }
+
+/* BUTTONS
+ * .btn-primary is the big full-width call-to-action button (works on
+ * <button> and <a>). .btn-gold and .btn-restart are color variants.
+ * .btn-next starts hidden and gets ".show" added once an answer is
+ * picked. .btn-row lays out two .btn-primary buttons side by side on
+ * the completion screen.
+ */
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background: var(--hawk-blue);
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    transition: background 0.15s, transform 0.1s;
+    -webkit-tap-highlight-color: transparent;
+}
+.btn-primary:active { background: var(--hawk-blue-mid); transform: scale(0.98); }
+.btn-gold        { background: var(--gold-dark); color: var(--hawk-blue); }
+.btn-gold:active { background: var(--gold); }
+.btn-next        { display: none; }
+.btn-next.show   { display: block; }
+
+.btn-row { display: flex; gap: 10px; width: 100%; }
+.btn-row .btn-primary { flex: 1; font-size: 0.9rem; padding: 14px 10px; }
+.btn-restart        { background: var(--gold-dark); color: var(--hawk-blue); }
+.btn-restart:active { background: var(--gold); }
+
+/* COMPLETION SCREEN - score ring + message
+ * .score-ring is a conic-gradient ring showing the score percentage.
+ * JS sets the --pct custom property:
+ *   scoreRing.style.setProperty('--pct', pct + '%')
+ */
+.complete-top {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    background: var(--white);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+}
+.score-ring {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    background: conic-gradient(var(--hawk-blue) 0% var(--pct,0%), #d0d8e8 var(--pct,0%));
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.score-inner {
+    width: 82px; height: 82px;
+    background: var(--white);
+    border-radius: 50%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.score-number   { font-weight: 900; font-size: 2rem; color: var(--hawk-blue); line-height: 1; }
+.score-denom    { font-size: 0.72rem; color: var(--text-soft); }
+.complete-title { font-weight: 900; font-size: 1.25rem; color: var(--hawk-blue); }
+.complete-msg   { font-size: 0.85rem; color: var(--text-soft); margin-top: 6px; line-height: 1.5; }
+
+/* FOOTER CREDIT */
+.footer-credit {
+    font-size: 0.72rem;
+    color: var(--text-soft);
+    text-align: center;
+    line-height: 1.6;
+    opacity: 0.7;
+}
+.footer-credit a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: currentColor;
+}
+
+/* SHAKE ANIMATION
+ * Used on the "wrong answer" button/option to nudge it left-right
+ * briefly. Shared by myth-vs-fact, safe-or-sus, and scenarios.
+ */
+@keyframes shake
+{
+    0%,100% { transform: translateX(0); }
+    25%     { transform: translateX(-5px); }
+    75%     { transform: translateX(5px); }
+}
