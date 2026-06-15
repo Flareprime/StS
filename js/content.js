@@ -69,8 +69,7 @@ const MAX_QUESTIONS = 10;
 async function loadContent(activityType) {
 
   // Fetch the file. fetch() resolves even on 404 — check response.ok manually.
-  const response = await fetch(CONTENT_URL);
-  if (!response.ok) {
+const response = await fetch(CONTENT_URL + '?v=' + Date.now());  if (!response.ok) {
     throw new Error(
       `HTTP ${response.status}: ${response.statusText}. ` +
       `Is ${CONTENT_URL} present alongside this HTML file?`

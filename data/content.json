@@ -351,6 +351,212 @@
           "avatar_speech_wrong": "Actually, this is sus. No overtime pay, no breaks, and 'keep it quiet' are workplace red flags."
         }
       ]
+    },
+    {
+      "activity_id": 3,
+      "activity_type": "scenario",
+      "activity_title": "Stop Sign Situations",
+      "activity_description": "Read real situations and decide what's actually a warning sign — and what's not.",
+      "questions": [
+        {
+          "question_id": 1,
+          "question_order": 1,
+          "question_text": "Charlie was a star player on the high school soccer team until a mid-season injury put them on the bench. You notice an assistant coach is paying a lot of attention to Charlie — driving them to and from practice, bringing gifts, and taking Charlie for one-on-one exercises. The coach also seems to be around when Charlie is talking to teammates and hovers when Charlie is alone. Charlie was really outgoing before but now seems more withdrawn. What's the clearest warning sign here?",
+          "answer_options": [
+            {
+              "answer_id": 1,
+              "answer_option": "Charlie got injured and is on the bench",
+              "correct_answer": false,
+              "feedback_text": "An injury alone isn't a warning sign — it's how the coach is responding to it that matters."
+            },
+            {
+              "answer_id": 2,
+              "answer_option": "The coach gives Charlie special attention, gifts, and controls who Charlie talks to",
+              "correct_answer": true,
+              "feedback_text": "This combo — singling someone out, giving gifts, and controlling their access to peers — is a textbook grooming tactic used to build trust and isolate a target."
+            },
+            {
+              "answer_id": 3,
+              "answer_option": "Charlie isn't playing as much this season",
+              "correct_answer": false,
+              "feedback_text": "A change in playing time is normal after an injury — it's not the concerning part of this story."
+            },
+            {
+              "answer_id": 4,
+              "answer_option": "Charlie's teammates noticed the coach is friendly",
+              "correct_answer": false,
+              "feedback_text": "Friendliness alone isn't the issue — it's the one-on-one attention, gifts, and hovering combined with Charlie withdrawing."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — special attention plus isolation is a classic grooming pattern.",
+          "avatar_speech_wrong": "Take another look — think about who's getting extra attention, and from who."
+        },
+        {
+          "question_id": 2,
+          "question_order": 2,
+          "question_text": "Emerson has been spending more time on his phone lately. He loves anime, which isn't a common interest at his school, so he's been connecting with people online to talk about shows and games he likes. He hasn't met any of his online friends in person, but doesn't seem as close with his school friends anymore. What's the best way to think about this?",
+          "answer_options": [
+            {
+              "answer_id": 5,
+              "answer_option": "This is already a trafficking situation — Emerson should stop talking to anyone online",
+              "correct_answer": false,
+              "feedback_text": "Nothing described here is dangerous on its own. Online friendships around shared interests are common and not inherently risky."
+            },
+            {
+              "answer_id": 6,
+              "answer_option": "Online friendships aren't dangerous by themselves, but it's worth watching for things like requests for personal info or pressure to meet in person alone",
+              "correct_answer": true,
+              "feedback_text": "Right — this scenario isn't a red flag yet. The real warning signs would be requests for personal details, pressure to keep the friendship secret, or pushing for an in-person meeting without a trusted adult."
+            },
+            {
+              "answer_id": 7,
+              "answer_option": "Emerson should be reported for not spending enough time with his school friends",
+              "correct_answer": false,
+              "feedback_text": "Interests changing over time is normal — that alone isn't a reason for concern or a report."
+            },
+            {
+              "answer_id": 8,
+              "answer_option": "There's nothing to think about since he hasn't met anyone in person",
+              "correct_answer": false,
+              "feedback_text": "It's still worth being aware of — grooming often starts online long before any in-person meeting is suggested."
+            }
+          ],
+          "avatar_speech_correct": "Right — context matters. The activity itself isn't the red flag.",
+          "avatar_speech_wrong": "Hmm — re-read it. Is anything here actually unsafe yet, or could it become unsafe?"
+        },
+        {
+          "question_id": 3,
+          "question_order": 3,
+          "question_text": "Olivia has started dating someone who doesn't go to her school and looks much older than her. Her partner now regularly picks her up and drops her off, and she's been late to school and choir practice more often. She's missing student council meetings and seems less interested in things she used to enjoy. She used to post often on social media, but her accounts have gone quiet. Her friends notice she isn't eating lunch with them anymore and always seems exhausted. Which pattern here is the biggest cause for concern?",
+          "answer_options": [
+            {
+              "answer_id": 9,
+              "answer_option": "Olivia is dating someone older who doesn't go to her school",
+              "correct_answer": false,
+              "feedback_text": "An age gap alone isn't necessarily a sign of trafficking — but combined with the other changes here, it's worth paying closer attention to."
+            },
+            {
+              "answer_id": 10,
+              "answer_option": "Olivia is being gradually cut off from friends, family, and activities, and seems exhausted and withdrawn",
+              "correct_answer": true,
+              "feedback_text": "This pattern — isolation from her support system, missed commitments, going quiet online, and exhaustion — is a common sign that someone may be being controlled by a partner."
+            },
+            {
+              "answer_id": 11,
+              "answer_option": "Olivia's social media accounts have gone quiet",
+              "correct_answer": false,
+              "feedback_text": "On its own, posting less is common and not concerning — it's one piece of a bigger pattern here."
+            },
+            {
+              "answer_id": 12,
+              "answer_option": "Olivia has been late to school a few times",
+              "correct_answer": false,
+              "feedback_text": "Occasional lateness happens to everyone — it only matters as part of the larger pattern of changes."
+            }
+          ],
+          "avatar_speech_correct": "Yes — it's the pattern, not any one detail, that matters most.",
+          "avatar_speech_wrong": "Look at all the changes together, not just one of them."
+        },
+        {
+          "question_id": 4,
+          "question_order": 4,
+          "question_text": "Mark has been hanging out more with his older brother lately. His brother went to the same high school but is 6 years older, so they weren't very close before. Occasionally you see them at places where Mark's brother and his friends are drinking alcohol — but they're over the legal drinking age, and you haven't seen Mark participating in anything illegal. What would actually make a situation like this concerning?",
+          "answer_options": [
+            {
+              "answer_id": 13,
+              "answer_option": "The fact that Mark's brother is several years older than him",
+              "correct_answer": false,
+              "feedback_text": "An age gap between siblings isn't a warning sign on its own."
+            },
+            {
+              "answer_id": 14,
+              "answer_option": "Mark spending time around adults who are drinking legally",
+              "correct_answer": false,
+              "feedback_text": "Being around legal drinking isn't itself dangerous for Mark, as long as he's not being pressured into anything."
+            },
+            {
+              "answer_id": 15,
+              "answer_option": "If Mark were being pressured to drink, use drugs, or take part in something illegal — none of which is described here",
+              "correct_answer": true,
+              "feedback_text": "Right — as written, nothing here is a red flag. The concern would only kick in if Mark were being pressured into drinking, drugs, or illegal activity by his brother's group."
+            },
+            {
+              "answer_id": 16,
+              "answer_option": "Mark reconnecting with his brother after not being close before",
+              "correct_answer": false,
+              "feedback_text": "Siblings growing closer over time is normal and not a warning sign by itself."
+            }
+          ],
+          "avatar_speech_correct": "Exactly — it's about what's actually happening, not just who Mark is around.",
+          "avatar_speech_wrong": "Think about what's described versus what isn't — what's the actual problem, if there is one?"
+        },
+        {
+          "question_id": 5,
+          "question_order": 5,
+          "question_text": "Isabelle's father passed away when she was younger. Her mother recently had surgery, so you've seen Isabelle's new stepfather around more. He's relatively standoffish and sometimes seems aggressive when he's around Isabelle. You've noticed changes to her personal hygiene, and she doesn't seem to care as much about homework or showing up for choir practice. What's the most significant warning sign here?",
+          "answer_options": [
+            {
+              "answer_id": 17,
+              "answer_option": "Isabelle has a new stepfather",
+              "correct_answer": false,
+              "feedback_text": "A new stepfather isn't a warning sign by itself — it's how he treats Isabelle that matters."
+            },
+            {
+              "answer_id": 18,
+              "answer_option": "Isabelle's stepfather is aggressive toward her, and she's showing a drop in hygiene and engagement at school",
+              "correct_answer": true,
+              "feedback_text": "Aggression from a caregiver combined with noticeable changes in hygiene and a drop in school engagement can be signs that someone is being mistreated or controlled at home."
+            },
+            {
+              "answer_id": 19,
+              "answer_option": "Isabelle's mother recently had surgery",
+              "correct_answer": false,
+              "feedback_text": "This explains why the stepfather is around more, but it's not itself a warning sign."
+            },
+            {
+              "answer_id": 20,
+              "answer_option": "Isabelle is in choir",
+              "correct_answer": false,
+              "feedback_text": "Choir isn't relevant on its own — it's that she's stopped showing up that's worth noting."
+            }
+          ],
+          "avatar_speech_correct": "Right — that combination is what stands out.",
+          "avatar_speech_wrong": "Some of these details are just background — focus on what's changed about Isabelle and how she's being treated."
+        },
+        {
+          "question_id": 6,
+          "question_order": 6,
+          "question_text": "Jay just started a new job as a \"housekeeper\" at a boutique hotel, cleaning rooms after guests check out. Jay's supervisor, Octavio, tells him that another housekeeper quit without notice, so the hotel is short-staffed. Octavio says that if Jay wants to keep his job, he needs to work double shifts and can't take breaks because there's no one to cover him. Although Jay's shifts start at 9 a.m., he often finds himself working until midnight — and later realizes Octavio never paid him overtime for those long shifts. Which part of Jay's experience is a sign of labor exploitation?",
+          "answer_options": [
+            {
+              "answer_id": 21,
+              "answer_option": "Jay works as a housekeeper at a hotel",
+              "correct_answer": false,
+              "feedback_text": "The job itself isn't the issue — plenty of housekeeping jobs are completely legitimate."
+            },
+            {
+              "answer_id": 22,
+              "answer_option": "Octavio requires Jay to work without breaks under threat of losing his job, and doesn't pay him overtime he's legally owed",
+              "correct_answer": true,
+              "feedback_text": "Forcing someone to work excessive hours without breaks, threatening their job to ensure compliance, and withholding legally required overtime pay are all signs of labor exploitation — and should be reported to a supervisor's supervisor, the Department of Labor, or local authorities."
+            },
+            {
+              "answer_id": 23,
+              "answer_option": "Another housekeeper quit without giving notice",
+              "correct_answer": false,
+              "feedback_text": "That's just context for why the hotel is short-staffed — it's not the exploitation itself."
+            },
+            {
+              "answer_id": 24,
+              "answer_option": "Jay's shifts start at 9 a.m.",
+              "correct_answer": false,
+              "feedback_text": "A 9 a.m. start time is normal — it's that his shifts are running until midnight without breaks or overtime pay that's the problem."
+            }
+          ],
+          "avatar_speech_correct": "Yes — those are classic labor trafficking red flags.",
+          "avatar_speech_wrong": "Focus on what Octavio is requiring of Jay, and what he's not getting in return."
+        }
+      ]
     }
   ],
   "resources": [
