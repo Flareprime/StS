@@ -1,23 +1,21 @@
-<!DOCTYPE html>
+<!doctype html>
 <!--
   SPOT THE SIGNS — Get Help & Learn More
   resources.html
 
-  PURPOSE
-  Static (non-quiz) resource module. Loads hotline/org info from
-  data/content.json (top-level "resources" array — the same array
-  used on every activity's completion screen) via buildResourcesList
-  in js/content.js. Also includes a "build your own resource map"
+    Static module. Loads hotline/org info from
+  data/content.json -  top-level resources array, same array
+  used on every activity's completion screen via buildResourcesList
+  in js/content.js.  includes a "build your own resource map"
   reflection card and links to learn more.
 
   NAVIGATION
-  ← Home button in header → returns to index.html
-  No score pill / progress bar — this is not a scored activity.
+  <- Home button in header → returns to index.html
+  No score pill/progress bar — this is not a scored activity.
 
-  MAINTAINER NOTES
+  NOTES
   - To add/edit hotlines or orgs, edit the "resources" array in
-    data/content.json — this page re-renders automatically. No code
-    changes needed.
+    data/content.json. This page re-renders automatically.
   - resource_phone supports tap-to-call (tel:) for numbers in
     1-888-373-7888 style; short codes ("Text HOME to 741741") are
     left as plain text.
@@ -25,268 +23,438 @@
     because fetch() is used to load data/content.json.
 -->
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Get Help &amp; Learn More — Spot the Signs</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Get Help &amp; Learn More — Spot the Signs</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Shared styles: colors, header, screens, buttons, resources list,
+    <!-- Shared styles: colors, header, screens, buttons, resources list,
        footer, etc. Page-specific styles (resource map, learn-more
        cards) are below in this file's own <style>. -->
-  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css" />
 
-  <style>
-    /* Everything shared with other pages (colors, header, screens,
-       avatar, generic .card, resources list, buttons, footer) lives
-       in css/style.css. Below is just what's specific to this page:
-       the section-header styling on top of .card, the empty-state
-       message, the resource-map prompts, and the learn-more links. */
+    <style>
+      .card-title {
+        font-weight: 800;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--hawk-blue);
+        margin-bottom: 12px;
+        border-bottom: 2px solid var(--gold);
+        padding-bottom: 8px;
+      }
+      .card-body-text {
+        font-size: 0.88rem;
+        color: var(--text-soft);
+        line-height: 1.55;
+      }
 
-    .card-title {
-      font-weight: 800;
-      font-size: 0.8rem;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--hawk-blue);
-      margin-bottom: 12px;
-      border-bottom: 2px solid var(--gold);
-      padding-bottom: 8px;
-    }
-    .card-body-text {
-      font-size: 0.88rem;
-      color: var(--text-soft);
-      line-height: 1.55;
-    }
+      /* Empty-state message if content.json's resources array is empty */
+      .resources-empty {
+        font-size: 0.85rem;
+        color: var(--text-soft);
+        line-height: 1.5;
+      }
 
-    /* Empty-state message if content.json's resources array is empty */
-    .resources-empty {
-      font-size: 0.85rem;
-      color: var(--text-soft);
-      line-height: 1.5;
-    }
+      /* Resource Map prompts */
+      .map-list {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        margin-top: 4px;
+      }
+      .map-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+      }
+      .map-icon {
+        font-size: 1.3rem;
+        width: 38px;
+        height: 38px;
+        background: var(--soaring-light);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .map-item-title {
+        font-weight: 700;
+        font-size: 0.88rem;
+        color: var(--text);
+        margin-bottom: 2px;
+      }
+      .map-item-desc {
+        font-size: 0.82rem;
+        color: var(--text-soft);
+        line-height: 1.45;
+      }
 
-    /* Resource Map prompts */
-    .map-list { display: flex; flex-direction: column; gap: 14px; margin-top: 4px; }
-    .map-item { display: flex; gap: 12px; align-items: flex-start; }
-    .map-icon {
-      font-size: 1.3rem;
-      width: 38px; height: 38px;
-      background: var(--soaring-light);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .map-item-title { font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 2px; }
-    .map-item-desc  { font-size: 0.82rem; color: var(--text-soft); line-height: 1.45; }
+      /* Learn More links */
+      .link-item {
+        padding: 10px 0;
+        border-bottom: 1px solid #e8edf5;
+      }
+      .link-item:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+      .link-name {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: var(--text);
+      }
+      .link-desc {
+        font-size: 0.8rem;
+        color: var(--text-soft);
+        margin-top: 1px;
+        line-height: 1.45;
+      }
+      .link-item a.link-url {
+        font-size: 0.78rem;
+        color: var(--hawk-blue);
+        text-decoration: underline;
+        word-break: break-all;
+      }
+      .link-item a.link-url:active {
+        opacity: 0.6;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- HEADER - no score pill, this isn't a scored activity -->
+    <header class="app-header">
+      <a class="btn-home" href="index.html">← Home</a>
+      <div class="header-title">GET HELP &amp; <span>LEARN MORE</span></div>
+      <div class="header-spacer" aria-hidden="true"></div>
+    </header>
 
-    /* Learn More links */
-    .link-item { padding: 10px 0; border-bottom: 1px solid #e8edf5; }
-    .link-item:last-child { border-bottom: none; padding-bottom: 0; }
-    .link-name { font-weight: 700; font-size: 0.9rem; color: var(--text); }
-    .link-desc { font-size: 0.8rem; color: var(--text-soft); margin-top: 1px; line-height: 1.45; }
-    .link-item a.link-url {
-      font-size: 0.78rem;
-      color: var(--hawk-blue);
-      text-decoration: underline;
-      word-break: break-all;
-    }
-    .link-item a.link-url:active { opacity: 0.6; }
-  </style>
-</head>
-<body>
+    <!-- LOADING SCREEN -->
+    <div class="status-screen" id="screenLoading">
+      <div class="spinner"></div>
+      <div class="status-title">Loading…</div>
+      <div class="status-msg">Fetching data/content.json</div>
+    </div>
 
-  <!-- HEADER - no score pill, this isn't a scored activity -->
-  <header class="app-header">
-    <a class="btn-home" href="index.html">← Home</a>
-    <div class="header-title">GET HELP &amp; <span>LEARN MORE</span></div>
-    <div class="header-spacer" aria-hidden="true"></div>
-  </header>
+    <!-- ERROR SCREEN -->
+    <div class="status-screen" id="screenError" style="display: none">
+      <div style="font-size: 2.5rem">⚠️</div>
+      <div class="status-title">Content unavailable</div>
+      <div class="status-msg" id="errorMsg">Could not load resources.</div>
+      <button class="btn-retry" onclick="init()">Try Again</button>
+      <a class="btn-home" href="index.html" style="margin-top: 4px"
+        >← Back to Home</a
+      >
+    </div>
 
-
-  <!-- LOADING SCREEN -->
-  <div class="status-screen" id="screenLoading">
-    <div class="spinner"></div>
-    <div class="status-title">Loading…</div>
-    <div class="status-msg">Fetching data/content.json</div>
-  </div>
-
-  <!-- ERROR SCREEN -->
-  <div class="status-screen" id="screenError" style="display: none;">
-    <div style="font-size: 2.5rem;">⚠️</div>
-    <div class="status-title">Content unavailable</div>
-    <div class="status-msg" id="errorMsg">Could not load resources.</div>
-    <button class="btn-retry" onclick="init()">Try Again</button>
-    <a class="btn-home" href="index.html" style="margin-top: 4px;">← Back to Home</a>
-  </div>
-
-
-  <!-- CONTENT SCREEN -->
-  <main class="screen" id="screenContent">
-
-    <!-- Avatar greeting (static "happy" pose) -->
-    <div class="avatar-row">
-      <svg class="avatar-figure" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="36" cy="14" r="11" fill="#002e6d" stroke="#001a47" stroke-width="2"/>
-        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
-        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
-        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
-        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
-        <line x1="36" y1="25" x2="36" y2="58" stroke="#002e6d" stroke-width="3.5" stroke-linecap="round"/>
-        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="58" x2="22" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="58" x2="50" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="22" y1="80" x2="14" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="50" y1="80" x2="58" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
-      <div class="avatar-bubble">
-        You don't have to handle this alone. Here's where to turn — for yourself or for someone you're worried about.
+    <!-- CONTENT SCREEN -->
+    <main class="screen" id="screenContent">
+      <!-- Avatar greeting (static "happy" pose) -->
+      <div class="avatar-row">
+        <svg
+          class="avatar-figure"
+          viewBox="0 0 72 90"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <circle
+            cx="36"
+            cy="14"
+            r="11"
+            fill="#002e6d"
+            stroke="#001a47"
+            stroke-width="2"
+          />
+          <circle cx="31" cy="12.5" r="1.8" fill="white" />
+          <circle cx="41" cy="12.5" r="1.8" fill="white" />
+          <path
+            d="M29.2 12.5 Q31 10.5 32.8 12.5"
+            stroke="#0d1b2a"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <path
+            d="M39.2 12.5 Q41 10.5 42.8 12.5"
+            stroke="#0d1b2a"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <path
+            d="M29 18 Q36 25 43 18"
+            stroke="white"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
+          <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
+          <line
+            x1="36"
+            y1="25"
+            x2="36"
+            y2="58"
+            stroke="#002e6d"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="33"
+            x2="16"
+            y2="24"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="33"
+            x2="56"
+            y2="24"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="58"
+            x2="22"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="58"
+            x2="50"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="22"
+            y1="80"
+            x2="14"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          />
+          <line
+            x1="50"
+            y1="80"
+            x2="58"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          />
+        </svg>
+        <div class="avatar-bubble">
+          You don't have to handle this alone. Here's where to turn — for
+          yourself or for someone you're worried about.
+        </div>
       </div>
-    </div>
 
-    <div class="warning-note">
-      ⚠️ If you or someone else is in immediate danger, call 911.
-    </div>
-
-    <!-- Hotlines & orgs — populated from content.json's "resources" array -->
-    <div class="card">
-      <div class="card-title">📞 Hotlines &amp; Support</div>
-      <div id="resourcesList">
-        <p class="resources-empty">No resources are currently listed in content.json.</p>
+      <div class="warning-note">
+        ⚠️ If you or someone else is in immediate danger, call 911.
       </div>
-    </div>
 
-    <!-- Build Your Own Resource Map — reflection prompts, adapted from the
+      <!-- Hotlines & orgs from content.json's resources array -->
+      <div class="card">
+        <div class="card-title">📞 Hotlines &amp; Support</div>
+        <div id="resourcesList">
+          <p class="resources-empty">
+            No resources are currently listed in content.json.
+          </p>
+        </div>
+      </div>
+
+      <!-- Build Your Own Resource Map — reflection prompts, adapted from the
          TraffickSTOP Toolkit's Resource Map activity. No data is collected;
          this is just a prompt to think it through (and write it down on
-         your own phone afterward). -->
-    <div class="card">
-      <div class="card-title">🗺️ Build Your Resource Map</div>
-      <p class="card-body-text" style="margin-bottom: 14px;">
-        Having a plan before you need it makes reaching out easier — for yourself
-        or for a friend. Take a minute to think through each of these. Nothing here
-        is saved, so if it helps, jot your answers down somewhere private afterward.
+         your own phone afterward). 
+         this whole idea is from the TraffikStop doc too, just a bit scattered around the text.
+         -->
+      <div class="card">
+        <div class="card-title">🗺️ Build Your Resource Map</div>
+        <p class="card-body-text" style="margin-bottom: 14px">
+          Having a plan before you need it makes reaching out easier — for
+          yourself or for a friend. Take a minute to think through each of
+          these. Nothing here is saved, so if it helps, jot your answers down
+          somewhere private afterward.
+        </p>
+        <div class="map-list">
+          <div class="map-item">
+            <div class="map-icon">🧑‍🤝‍🧑</div>
+            <div>
+              <div class="map-item-title">Friends you trust</div>
+              <div class="map-item-desc">
+                Who would you talk to first if something felt wrong?
+              </div>
+            </div>
+          </div>
+          <div class="map-item">
+            <div class="map-icon">🧑‍🏫</div>
+            <div>
+              <div class="map-item-title">Adults you feel safe telling</div>
+              <div class="map-item-desc">
+                A parent, teacher, advisor, coach, or counselor you could go to.
+              </div>
+            </div>
+          </div>
+          <div class="map-item">
+            <div class="map-icon">🏫</div>
+            <div>
+              <div class="map-item-title">School &amp; community support</div>
+              <div class="map-item-desc">
+                Campus safety, student services, or local organizations like
+                SARC.
+              </div>
+            </div>
+          </div>
+          <div class="map-item">
+            <div class="map-icon">📱</div>
+            <div>
+              <div class="map-item-title">Online &amp; app-based resources</div>
+              <div class="map-item-desc">
+                Hotlines and chat services you could reach out to from your
+                phone.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Learn More — links out to source material -->
+      <div class="card">
+        <div class="card-title">📚 Learn More</div>
+        <div class="link-item">
+          <div class="link-name">TraffickSTOP Toolkit</div>
+          <div class="link-desc">
+            The activity guide this app's content is based on, from the National
+            White Collar Crime Center (NW3C).
+          </div>
+          <a
+            class="link-url"
+            href="https://www.traffickingstop.org/wp-content/uploads/2024/07/TraffickSTOP-Toolkit-2024_07.pdf"
+            target="_blank"
+            rel="noopener"
+            >traffickingstop.org</a
+          >
+        </div>
+        <div class="link-item">
+          <div class="link-name">Polaris Project</div>
+          <div class="link-desc">
+            Research, survivor support, and the National Human Trafficking
+            Hotline.
+          </div>
+          <a
+            class="link-url"
+            href="https://polarisproject.org"
+            target="_blank"
+            rel="noopener"
+            >polarisproject.org</a
+          >
+        </div>
+        <div class="link-item">
+          <div class="link-name">Safety Planning Guide</div>
+          <div class="link-desc">
+            Tips for building a personal safety plan, from the National Human
+            Trafficking Hotline.
+          </div>
+          <a
+            class="link-url"
+            href="https://humantraffickinghotline.org/faqs/safety-planning-information"
+            target="_blank"
+            rel="noopener"
+            >humantraffickinghotline.org</a
+          >
+        </div>
+      </div>
+
+      <a class="btn-primary" href="index.html">← Back to Activities</a>
+
+      <p class="footer-credit">
+        Content sourced from the
+        <a
+          href="https://www.traffickingstop.org/wp-content/uploads/2024/07/TraffickSTOP-Toolkit-2024_07.pdf"
+          target="_blank"
+          rel="noopener"
+          >TraffickSTOP Toolkit</a
+        >
+        (NW3C, 2024) and
+        <a href="https://polarisproject.org" target="_blank" rel="noopener"
+          >Polaris Project</a
+        >.<br />
+        Developed by PTK at Columbia Basin College · Pasco, WA
       </p>
-      <div class="map-list">
-        <div class="map-item">
-          <div class="map-icon">🧑‍🤝‍🧑</div>
-          <div>
-            <div class="map-item-title">Friends you trust</div>
-            <div class="map-item-desc">Who would you talk to first if something felt wrong?</div>
-          </div>
-        </div>
-        <div class="map-item">
-          <div class="map-icon">🧑‍🏫</div>
-          <div>
-            <div class="map-item-title">Adults you feel safe telling</div>
-            <div class="map-item-desc">A parent, teacher, advisor, coach, or counselor you could go to.</div>
-          </div>
-        </div>
-        <div class="map-item">
-          <div class="map-icon">🏫</div>
-          <div>
-            <div class="map-item-title">School &amp; community support</div>
-            <div class="map-item-desc">Campus safety, student services, or local organizations like SARC.</div>
-          </div>
-        </div>
-        <div class="map-item">
-          <div class="map-icon">📱</div>
-          <div>
-            <div class="map-item-title">Online &amp; app-based resources</div>
-            <div class="map-item-desc">Hotlines and chat services you could reach out to from your phone.</div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </main>
 
-    <!-- Learn More — links out to source material -->
-    <div class="card">
-      <div class="card-title">📚 Learn More</div>
-      <div class="link-item">
-        <div class="link-name">TraffickSTOP Toolkit</div>
-        <div class="link-desc">The activity guide this app's content is based on, from the National White Collar Crime Center (NW3C).</div>
-        <a class="link-url" href="https://www.traffickingstop.org/wp-content/uploads/2024/07/TraffickSTOP-Toolkit-2024_07.pdf" target="_blank" rel="noopener">traffickingstop.org</a>
-      </div>
-      <div class="link-item">
-        <div class="link-name">Polaris Project</div>
-        <div class="link-desc">Research, survivor support, and the National Human Trafficking Hotline.</div>
-        <a class="link-url" href="https://polarisproject.org" target="_blank" rel="noopener">polarisproject.org</a>
-      </div>
-      <div class="link-item">
-        <div class="link-name">Safety Planning Guide</div>
-        <div class="link-desc">Tips for building a personal safety plan, from the National Human Trafficking Hotline.</div>
-        <a class="link-url" href="https://humantraffickinghotline.org/faqs/safety-planning-information" target="_blank" rel="noopener">humantraffickinghotline.org</a>
-      </div>
-    </div>
-
-    <a class="btn-primary" href="index.html">← Back to Activities</a>
-
-    <p class="footer-credit">
-      Content sourced from the <a href="https://www.traffickingstop.org/wp-content/uploads/2024/07/TraffickSTOP-Toolkit-2024_07.pdf" target="_blank" rel="noopener">TraffickSTOP Toolkit</a> (NW3C, 2024) and <a href="https://polarisproject.org" target="_blank" rel="noopener">Polaris Project</a>.<br>
-      Developed by PTK at Columbia Basin College · Pasco, WA
-    </p>
-  </main>
-
-
-  <script src="js/ui.js"></script>
-  <script src="js/content.js"></script>
-  <script>
-    // This page has no question flow or scoring - it just loads
-    // data/content.json and renders the shared "resources" array
-    // using buildResourcesList() (js/content.js), the same helper
-    // every activity's completion screen uses.
-    //
-    // CONTENT_URL and buildResourcesList() come from js/content.js.
-    // showScreen() comes from js/ui.js.
-    async function init()
-    {
+    <script src="js/ui.js"></script>
+    <script src="js/content.js"></script>
+    <script>
+      //  loads data/content.json and  the shared resources array
+      // using buildResourcesList() (js/content.js)
+      //
+      // CONTENT_URL and buildResourcesList() come from js/content.js.
+      // showScreen() comes from js/ui.js.
+      async function init() {
         // Reset to the loading state every time init() runs - this
         // matters for the "Try Again" button on the error screen,
         // which calls init() again.
-        document.getElementById('screenLoading').style.display = 'flex';
-        document.getElementById('screenError').style.display   = 'none';
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById("screenLoading").style.display = "flex";
+        document.getElementById("screenError").style.display = "none";
+        document
+          .querySelectorAll(".screen")
+          .forEach((s) => s.classList.remove("active"));
 
-        try
-        {
-            // The "?v=" + Date.now() cache-busts content.json so edits
-            // show up immediately instead of using a cached copy.
-            const response = await fetch(CONTENT_URL + '?v=' + Date.now());
+        try {
+          // The "?v=" + Date.now() busts content.json so edits
+          //show up immediately instead of using a cached copy.
+          const response = await fetch(CONTENT_URL + "?v=" + Date.now());
 
-            if (!response.ok)
-            {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
+          if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
 
-            const data = await response.json();
-            buildResourcesList(data.resources || []);
+          const data = await response.json();
+          buildResourcesList(data.resources || []);
 
-            document.getElementById('screenLoading').style.display = 'none';
-            showScreen('screenContent');
+          document.getElementById("screenLoading").style.display = "none";
+          showScreen("screenContent");
+        } catch (err) {
+          // Most likely cause: this page was opened directly from
+          // disk (file://) instead of through a web server, so
+          // fetch() was blocked. Could also mean content.json is
+          // missing or has invalid JSON. Or a typo
+          console.error("Content load error:", err);
+          document.getElementById("screenLoading").style.display = "none";
+          document.getElementById("errorMsg").textContent =
+            `Could not load resources. (${err.message})`;
+          document.getElementById("screenError").style.display = "flex";
         }
-        catch (err)
-        {
-            // Most likely cause: this page was opened directly from
-            // disk (file://) instead of through a web server, so
-            // fetch() was blocked. Could also mean content.json is
-            // missing or has invalid JSON.
-            console.error('Content load error:', err);
-            document.getElementById('screenLoading').style.display = 'none';
-            document.getElementById('errorMsg').textContent = `Could not load resources. (${err.message})`;
-            document.getElementById('screenError').style.display = 'flex';
-        }
-    }
+      }
 
-    // Boot: load content as soon as the page is ready
-    init();
-  </script>
-
-</body>
+      // Boot: load content as soon as the page is ready
+      init();
+    </script>
+  </body>
 </html>

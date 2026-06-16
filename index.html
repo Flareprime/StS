@@ -1,133 +1,122 @@
-<!DOCTYPE html>
+<!doctype html>
 <!--
   SPOT THE SIGNS — Home / Activity Hub
   index.html
-  PURPOSE
-  Landing page for the Spot the Signs awareness app. Displays the
-  avatar, a brief welcome, and cards linking to each activity
-  module. Add new module cards here as new activities are built.
-
-  ADDING A NEW ACTIVITY MODULE
-  1. Build the new module as its own HTML file (e.g. scenarios.html)
-  2. Copy one of the .activity-card divs below
-  3. Update the title, description, icon, and href to match
-  4. Change the card's status from "coming-soon" to "available"
-     and remove the <div class="badge">Coming Soon</div>
-
-  DEPLOYMENT
-  Push all files to GitHub. GitHub Pages serves index.html
-  automatically when visiting the root URL — no extra config needed.
-  QR code should point to the root URL, not index.html explicitly.
--->
+  
+  Landing page. Shows the  avatar, a  welcome, and cards linking to each activity
+  module.  new module cards go here
+ -->
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Spot the Signs — Human Trafficking Awareness</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Spot the Signs — Human Trafficking Awareness</title>
 
-  <!-- Montserrat: closest free web alternative to CBC's brand fonts (Gotham/Tisa) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Montserrat: closest free web alternative to CBC's brand fonts (Gotham/Tisa) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Shared styles: colors, avatar, cards, warning note, footer, etc.
-       live in css/style.css. index.html's header is different from
-       the activity pages (not sticky, centered title, no back/score
-       pill), so .app-header/.header-title are overridden below. -->
-  <link rel="stylesheet" href="css/style.css">
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="css/style.css" />
 
-  <style>
-    /* Color variables, the page reset, and body styling live in
-       css/style.css. Below is everything specific to the home page:
-       the header override, the avatar/welcome cards, activity cards,
-       and section heading. */
+    <style>
+      /* Header override. index.html's header is centered and not
+       sticky, unlike the activity pages header in css/style.css. */
+      .app-header {
+        width: 100%;
+        background: var(--hawk-blue);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+      }
+      .header-title {
+        font-weight: 900;
+        font-size: 1.15rem;
+        color: var(--white);
+        letter-spacing: 0.04em;
+      }
+      .header-title span {
+        color: var(--gold);
+      }
 
-    /* Header override - index.html's header is centered and not
-       sticky, unlike the activity pages' header in css/style.css. */
-    .app-header {
-      width: 100%;
-      background: var(--hawk-blue);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
-    }
-    .header-title {
-      font-weight: 900;
-      font-size: 1.15rem;
-      color: var(--white);
-      letter-spacing: 0.04em;
-    }
-    .header-title span { color: var(--gold); }
+      /* Gold accent bar under header */
+      .header-accent {
+        width: 100%;
+        height: 5px;
+        background: var(--gold);
+      }
 
-    /* Gold accent bar under header */
-    .header-accent {
-      width: 100%;
-      height: 5px;
-      background: var(--gold);
-    }
+      /* Page content wrapper */
+      .page {
+        width: 100%;
+        max-width: 480px;
+        padding: 24px 16px 48px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+      }
 
-    /* Page content wrapper */
-    .page {
-      width: 100%;
-      max-width: 480px;
-      padding: 24px 16px 48px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    /* Welcome card
+      /* Welcome card
        Explains what the app is and why it exists.
     */
-    .welcome-card {
-      background: var(--hawk-blue);
-      border-radius: 16px;
-      padding: 22px 20px;
-      width: 100%;
-      box-shadow: var(--shadow);
-      color: var(--white);
-    }
-    .welcome-title {
-      font-weight: 900;
-      font-size: 1.5rem;
-      line-height: 1.2;
-      margin-bottom: 8px;
-    }
-    .welcome-title span { color: var(--gold); }
-    .welcome-desc {
-      font-size: 0.88rem;
-      line-height: 1.55;
-      opacity: 0.88;
-    }
+      .welcome-card {
+        background: var(--hawk-blue);
+        border-radius: 16px;
+        padding: 22px 20px;
+        width: 100%;
+        box-shadow: var(--shadow);
+        color: var(--white);
+      }
+      .welcome-title {
+        font-weight: 900;
+        font-size: 1.5rem;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+      .welcome-title span {
+        color: var(--gold);
+      }
+      .welcome-desc {
+        font-size: 0.88rem;
+        line-height: 1.55;
+        opacity: 0.88;
+      }
 
-    /* Section heading */
-    .section-heading {
-      width: 100%;
-      font-weight: 800;
-      font-size: 0.72rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--text-soft);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .section-heading::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--soaring-blue);
-      opacity: 0.4;
-    }
+      /* Section heading */
+      .section-heading {
+        width: 100%;
+        font-weight: 800;
+        font-size: 0.72rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .section-heading::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--soaring-blue);
+        opacity: 0.4;
+      }
 
-    /* Activity cards
+      /* Activity cards
        Each card links to one activity module.
 
        States:
-       .available    — fully built, tappable link
+       .available    — fully built, link
        .coming-soon  — not yet built, visually muted, not a link
 
        TO ADD A NEW MODULE:
@@ -136,210 +125,310 @@
        update the icon, title, description, and detail fields,
        and remove the .badge div.
     */
-    .activity-card {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      background: var(--white);
-      border-radius: 14px;
-      padding: 18px 16px;
-      width: 100%;
-      box-shadow: var(--shadow);
-      text-decoration: none;
-      color: var(--text);
-      position: relative;
-      border: 2px solid transparent;
-      transition: border-color 0.15s, transform 0.1s;
-    }
+      .activity-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: var(--white);
+        border-radius: 14px;
+        padding: 18px 16px;
+        width: 100%;
+        box-shadow: var(--shadow);
+        text-decoration: none;
+        color: var(--text);
+        position: relative;
+        border: 2px solid transparent;
+        transition:
+          border-color 0.15s,
+          transform 0.1s;
+      }
 
-    /* Available (active) card: tappable, has hover/active feedback */
-    .activity-card.available {
-      border-color: var(--soaring-blue);
-      cursor: pointer;
-    }
-    .activity-card.available:hover  { border-color: var(--hawk-blue); }
-    .activity-card.available:active { transform: scale(0.98); border-color: var(--hawk-blue); }
+      /* Available (active) card */
+      .activity-card.available {
+        border-color: var(--soaring-blue);
+        cursor: pointer;
+      }
+      .activity-card.available:hover {
+        border-color: var(--hawk-blue);
+      }
+      .activity-card.available:active {
+        transform: scale(0.98);
+        border-color: var(--hawk-blue);
+      }
 
-    /* Coming soon card: muted, not interactive */
-    .activity-card.coming-soon {
-      opacity: 0.55;
-      cursor: default;
-      pointer-events: none;
-    }
+      /* Coming soon card*/
+      .activity-card.coming-soon {
+        opacity: 0.55;
+        cursor: default;
+        pointer-events: none;
+      }
 
-    .card-icon {
-      font-size: 2rem;
-      width: 52px;
-      height: 52px;
-      background: var(--soaring-light);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    /* Available cards get a gold-tinted icon background */
-    .activity-card.available .card-icon { background: #fff8e0; }
+      .card-icon {
+        font-size: 2rem;
+        width: 52px;
+        height: 52px;
+        background: var(--soaring-light);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      /* Available cards get a gold tinted icon background */
+      .activity-card.available .card-icon {
+        background: #fff8e0;
+      }
 
-    .card-body { flex: 1; }
-    .card-title {
-      font-weight: 800;
-      font-size: 1rem;
-      color: var(--hawk-blue);
-      margin-bottom: 3px;
-    }
-    .card-desc {
-      font-size: 0.82rem;
-      color: var(--text-soft);
-      line-height: 1.4;
-    }
-    .card-detail {
-      font-size: 0.75rem;
-      color: var(--soaring-blue);
-      font-weight: 700;
-      margin-top: 5px;
-    }
+      .card-body {
+        flex: 1;
+      }
+      .card-title {
+        font-weight: 800;
+        font-size: 1rem;
+        color: var(--hawk-blue);
+        margin-bottom: 3px;
+      }
+      .card-desc {
+        font-size: 0.82rem;
+        color: var(--text-soft);
+        line-height: 1.4;
+      }
+      .card-detail {
+        font-size: 0.75rem;
+        color: var(--soaring-blue);
+        font-weight: 700;
+        margin-top: 5px;
+      }
 
-    /* Arrow indicator on available cards only */
-    .card-arrow {
-      font-size: 1.2rem;
-      color: var(--soaring-blue);
-      flex-shrink: 0;
-    }
-    .activity-card.coming-soon .card-arrow { display: none; }
+      /* Arrow indicator on available cards only */
+      .card-arrow {
+        font-size: 1.2rem;
+        color: var(--soaring-blue);
+        flex-shrink: 0;
+      }
+      .activity-card.coming-soon .card-arrow {
+        display: none;
+      }
 
-    /* "Coming Soon" badge */
-    .badge {
-      position: absolute;
-      top: 10px;
-      right: 12px;
-      background: var(--soaring-light);
-      color: var(--text-soft);
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 8px;
-      border-radius: 20px;
-      border: 1px solid var(--soaring-blue);
-    }
+      /* "Coming Soon" badge */
+      .badge {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        background: var(--soaring-light);
+        color: var(--text-soft);
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 20px;
+        border: 1px solid var(--soaring-blue);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header: no back button needed, its the home screen -->
+    <header class="app-header">
+      <div class="header-title">SPOT <span>THE SIGNS</span></div>
+    </header>
+    <div class="header-accent"></div>
 
-  </style>
-</head>
-<body>
-
-  <!-- Header: no back button needed here (this is the home screen) -->
-  <header class="app-header">
-    <div class="header-title">SPOT <span>THE SIGNS</span></div>
-  </header>
-  <div class="header-accent"></div>
-
-  <div class="page">
-
-    <!-- Avatar welcome -->
-    <div class="avatar-row">
-      <!-- Happy avatar — welcoming pose with arms up -->
-      <!-- AVATAR SWAP: Replace svg with <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
-      <svg class="avatar-figure" viewBox="0 0 72 90" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <circle cx="36" cy="14" r="11" fill="#002e6d" stroke="#001a47" stroke-width="2"/>
-        <circle cx="31" cy="12.5" r="1.8" fill="white"/>
-        <circle cx="41" cy="12.5" r="1.8" fill="white"/>
-        <path d="M29.2 12.5 Q31 10.5 32.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M39.2 12.5 Q41 10.5 42.8 12.5" stroke="#0d1b2a" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M29 18 Q36 25 43 18" stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-        <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
-        <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5"/>
-        <line x1="36" y1="25" x2="36" y2="58" stroke="#002e6d" stroke-width="3.5" stroke-linecap="round"/>
-        <line x1="36" y1="33" x2="16" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="33" x2="56" y2="24" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="58" x2="22" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="36" y1="58" x2="50" y2="80" stroke="#002e6d" stroke-width="3" stroke-linecap="round"/>
-        <line x1="22" y1="80" x2="14" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
-        <line x1="50" y1="80" x2="58" y2="80" stroke="#002e6d" stroke-width="2.5" stroke-linecap="round"/>
-      </svg>
-      <div class="avatar-bubble">
-        Welcome! Pick an activity below and let's learn about human trafficking together. It only takes a few minutes!
+    <div class="page">
+      <!-- Avatar welcome -->
+      <div class="avatar-row">
+        <!-- Happy avatar — welcoming pose with arms up -->
+        <!-- AVATAR SWAP: Replace svg with <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
+        <svg
+          class="avatar-figure"
+          viewBox="0 0 72 90"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
+        >
+          <circle
+            cx="36"
+            cy="14"
+            r="11"
+            fill="#002e6d"
+            stroke="#001a47"
+            stroke-width="2"
+          />
+          <circle cx="31" cy="12.5" r="1.8" fill="white" />
+          <circle cx="41" cy="12.5" r="1.8" fill="white" />
+          <path
+            d="M29.2 12.5 Q31 10.5 32.8 12.5"
+            stroke="#0d1b2a"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <path
+            d="M39.2 12.5 Q41 10.5 42.8 12.5"
+            stroke="#0d1b2a"
+            stroke-width="1.5"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <path
+            d="M29 18 Q36 25 43 18"
+            stroke="white"
+            stroke-width="2.2"
+            stroke-linecap="round"
+            fill="none"
+          />
+          <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
+          <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
+          <line
+            x1="36"
+            y1="25"
+            x2="36"
+            y2="58"
+            stroke="#002e6d"
+            stroke-width="3.5"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="33"
+            x2="16"
+            y2="24"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="33"
+            x2="56"
+            y2="24"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="58"
+            x2="22"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="36"
+            y1="58"
+            x2="50"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="3"
+            stroke-linecap="round"
+          />
+          <line
+            x1="22"
+            y1="80"
+            x2="14"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          />
+          <line
+            x1="50"
+            y1="80"
+            x2="58"
+            y2="80"
+            stroke="#002e6d"
+            stroke-width="2.5"
+            stroke-linecap="round"
+          />
+        </svg>
+        <div class="avatar-bubble">
+          Welcome! Pick an activity below and let's learn about human
+          trafficking together. It only takes a few minutes!
+        </div>
       </div>
-    </div>
 
-    <!-- Welcome / about card -->
-    <div class="welcome-card">
-      <div class="welcome-title">Spot the <span>Signs</span></div>
-      <p class="welcome-desc">
-        Human trafficking happens everywhere — including right here in our community.
-        These short interactive activities will help you learn to recognize warning signs,
-        challenge common myths, and know where to get help.
+      <!-- Welcome / about card -->
+      <div class="welcome-card">
+        <div class="welcome-title">Spot the <span>Signs</span></div>
+        <p class="welcome-desc">
+          Human trafficking happens everywhere — including right here in our
+          community. These short interactive activities will help you learn to
+          recognize warning signs, challenge common myths, and know where to get
+          help.
+        </p>
+      </div>
+
+      <div class="warning-note">
+        ⚠️ These activities cover sensitive topics. Take a breath anytime you
+        need one.
+      </div>
+
+      <!-- Activity cards -->
+      <div class="section-heading">Choose an Activity</div>
+
+      <!-- Myth vs. Fact -->
+      <a class="activity-card available" href="myth-vs-fact.html">
+        <div class="card-icon">⚖️</div>
+        <div class="card-body">
+          <div class="card-title">Myth vs. Fact</div>
+          <div class="card-desc">
+            Test what you know — or think you know — about human trafficking.
+          </div>
+          <div class="card-detail">10 questions · ~2 minutes</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <!-- Situations (Scenarios) -->
+      <a class="activity-card available" href="scenarios.html">
+        <div class="card-icon">🛑</div>
+        <div class="card-body">
+          <div class="card-title">Stop Sign Situations</div>
+          <div class="card-desc">
+            Read real-world scenarios and spot the warning signs of grooming and
+            trafficking.
+          </div>
+          <div class="card-detail">6 situations · ~3 minutes</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <!-- Safe or Sus -->
+      <a class="activity-card available" href="safe-or-sus.html">
+        <div class="card-icon">🤔</div>
+        <div class="card-body">
+          <div class="card-title">Safe or Sus?</div>
+          <div class="card-desc">
+            Is this behavior safe or suspicious? Practice spotting healthy vs.
+            unhealthy relationship boundaries.
+          </div>
+          <div class="card-detail">6 scenarios · ~3 minutes</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </a>
+
+      <!-- Resources -->
+      <a class="activity-card available" href="resources.html">
+        <div class="card-icon">📞</div>
+        <div class="card-body">
+          <div class="card-title">Get Help & Learn More</div>
+          <div class="card-desc">
+            Hotlines, local resources, and organizations working to end human
+            trafficking.
+          </div>
+          <div class="card-detail">Resource guide</div>
+        </div>
+        <div class="card-arrow">›</div>
+      </div>
+
+      <p class="footer-credit">
+        Content sourced from the TraffickSTOP Toolkit (NW3C, 2024) and Polaris
+        Project.<br />
+        Developed by Phi Theta Kappa at Columbia Basin College · Pasco, WA
       </p>
     </div>
-
-    <div class="warning-note">
-      ⚠️ These activities cover sensitive topics. Take a breath anytime you need one.
-    </div>
-
-    <!-- Activity cards
-       Add new module cards here as you build them.
-       See the file header comments for step-by-step instructions.
-    -->
-    <div class="section-heading">Choose an Activity</div>
-
-    <!-- AVAILABLE: Myth vs. Fact -->
-    <a class="activity-card available" href="myth-vs-fact.html">
-      <div class="card-icon">⚖️</div>
-      <div class="card-body">
-        <div class="card-title">Myth vs. Fact</div>
-        <div class="card-desc">
-          Test what you know — or think you know — about human trafficking.
-        </div>
-        <div class="card-detail">10 questions · ~2 minutes</div>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
-
-    <!-- AVAILABLE: Stop Sign Situations (Scenario activity) -->
-    <a class="activity-card available" href="scenarios.html">
-      <div class="card-icon">🛑</div>
-      <div class="card-body">
-        <div class="card-title">Stop Sign Situations</div>
-        <div class="card-desc">
-          Read real-world scenarios and spot the warning signs of grooming and trafficking.
-        </div>
-        <div class="card-detail">6 situations · ~3 minutes</div>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
-
-    <!-- AVAILABLE: Safe or Sus (Boundaries activity) -->
-    <a class="activity-card available" href="safe-or-sus.html">
-      <div class="card-icon">🤔</div>
-      <div class="card-body">
-        <div class="card-title">Safe or Sus?</div>
-        <div class="card-desc">
-          Is this behavior safe or suspicious? Practice spotting healthy vs. unhealthy relationship boundaries.
-        </div>
-        <div class="card-detail">6 scenarios · ~3 minutes</div>
-      </div>
-      <div class="card-arrow">›</div>
-    </a>
-
-    <!-- COMING SOON: Resources -->
-    <div class="activity-card coming-soon">
-      <div class="badge">Coming Soon</div>
-      <div class="card-icon">📞</div>
-      <div class="card-body">
-        <div class="card-title">Get Help & Learn More</div>
-        <div class="card-desc">
-          Hotlines, local resources, and organizations working to end human trafficking.
-        </div>
-        <div class="card-detail">Resource guide</div>
-      </div>
-      <div class="card-arrow">›</div>
-    </div>
-
-    <p class="footer-credit">
-      Content sourced from the TraffickSTOP Toolkit (NW3C, 2024) and Polaris Project.<br>
-      Developed by Phi Theta Kappa at Columbia Basin College · Pasco, WA
-    </p>
-
-  </div><!-- end .page -->
-</body>
+    <!-- end .page -->
+  </body>
 </html>
