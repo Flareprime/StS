@@ -1,3 +1,6 @@
+Link to the activity: https://flareprime.github.io/StS/index.html
+Repository link: https://github.com/Flareprime/StS
+
 # Spot the Signs
 
 An interactive human trafficking awareness activity developed as a Software Development Capstone project at Columbia Basin College.
