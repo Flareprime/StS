@@ -273,111 +273,8 @@
   -->
     <main class="screen" id="screenIntro">
       <div class="avatar-row">
-        <!-- AVATAR SWAP: Replace svg with <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
-        <svg
-          class="avatar-figure"
-          viewBox="0 0 72 90"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <circle
-            cx="36"
-            cy="14"
-            r="11"
-            fill="#002e6d"
-            stroke="#001a47"
-            stroke-width="2"
-          />
-          <circle cx="31" cy="12.5" r="1.8" fill="white" />
-          <circle cx="41" cy="12.5" r="1.8" fill="white" />
-          <path
-            d="M29.2 12.5 Q31 10.5 32.8 12.5"
-            stroke="#0d1b2a"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <path
-            d="M39.2 12.5 Q41 10.5 42.8 12.5"
-            stroke="#0d1b2a"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <path
-            d="M29 18 Q36 25 43 18"
-            stroke="white"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
-          <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
-          <line
-            x1="36"
-            y1="25"
-            x2="36"
-            y2="58"
-            stroke="#002e6d"
-            stroke-width="3.5"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="33"
-            x2="16"
-            y2="24"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="33"
-            x2="56"
-            y2="24"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="58"
-            x2="22"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="58"
-            x2="50"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="22"
-            y1="80"
-            x2="14"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-          <line
-            x1="50"
-            y1="80"
-            x2="58"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-        </svg>
+        <!-- Intro avatar: neutral detective penguin, static image -->
+        <img src="images/SdetPen_main.png" class="avatar-figure" alt="" />
         <div class="avatar-bubble">
           Some situations are obvious. Others... not so much. Let's practice
           spotting healthy vs. unhealthy boundaries!
@@ -426,73 +323,16 @@
     <main class="screen" id="screenQuestion">
       <div class="avatar-row">
         <!--
-        Dynamic avatar: face (<g id="avatarFace">) and arms (<g id="avatarArms">)
-        are swapped by setAvatarExpression() in JS.
+        Dynamic avatar: setAvatarExpression() in js/avatar.js swaps
+        this image's src to show thinking / happy / surprised penguins.
+        The id "avatarImg" is what avatar.js looks for - don't rename it.
         -->
-        <svg
+        <img
+          src="images/SdetPen_question.png"
           class="avatar-figure"
-          id="avatarSVG"
-          viewBox="0 0 72 90"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <circle
-            cx="36"
-            cy="14"
-            r="11"
-            fill="#002e6d"
-            stroke="#001a47"
-            stroke-width="2"
-          />
-          <g id="avatarFace"></g>
-          <line
-            x1="36"
-            y1="25"
-            x2="36"
-            y2="58"
-            stroke="#002e6d"
-            stroke-width="3.5"
-            stroke-linecap="round"
-          />
-          <g id="avatarArms"></g>
-          <line
-            x1="36"
-            y1="58"
-            x2="22"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="58"
-            x2="50"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="22"
-            y1="80"
-            x2="14"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-          <line
-            x1="50"
-            y1="80"
-            x2="58"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-        </svg>
+          id="avatarImg"
+          alt=""
+        />
         <div class="avatar-bubble" id="avatarSpeech">
           Safe or Sus? Think about the boundaries involved.
         </div>
@@ -547,111 +387,8 @@
   -->
     <main class="screen" id="screenComplete">
       <div class="avatar-row">
-        <!-- AVATAR SWAP: <img src="avatar-happy.png" class="avatar-figure" alt=""> -->
-        <svg
-          class="avatar-figure"
-          viewBox="0 0 72 90"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <circle
-            cx="36"
-            cy="14"
-            r="11"
-            fill="#002e6d"
-            stroke="#001a47"
-            stroke-width="2"
-          />
-          <circle cx="31" cy="12.5" r="1.8" fill="white" />
-          <circle cx="41" cy="12.5" r="1.8" fill="white" />
-          <path
-            d="M29.2 12.5 Q31 10.5 32.8 12.5"
-            stroke="#0d1b2a"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <path
-            d="M39.2 12.5 Q41 10.5 42.8 12.5"
-            stroke="#0d1b2a"
-            stroke-width="1.5"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <path
-            d="M29 18 Q36 25 43 18"
-            stroke="white"
-            stroke-width="2.2"
-            stroke-linecap="round"
-            fill="none"
-          />
-          <circle cx="29.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
-          <circle cx="42.5" cy="17" r="2" fill="#ffbf3b" opacity="0.5" />
-          <line
-            x1="36"
-            y1="25"
-            x2="36"
-            y2="58"
-            stroke="#002e6d"
-            stroke-width="3.5"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="33"
-            x2="16"
-            y2="24"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="33"
-            x2="56"
-            y2="24"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="58"
-            x2="22"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="36"
-            y1="58"
-            x2="50"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="3"
-            stroke-linecap="round"
-          />
-          <line
-            x1="22"
-            y1="80"
-            x2="14"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-          <line
-            x1="50"
-            y1="80"
-            x2="58"
-            y2="80"
-            stroke="#002e6d"
-            stroke-width="2.5"
-            stroke-linecap="round"
-          />
-        </svg>
+        <!-- Completion avatar: happy penguin, static image -->
+        <img src="images/SdetPen_happy.png" class="avatar-figure" alt="" />
         <div class="avatar-bubble" id="completeSpeech">
           You made it through all the scenarios. Here's how you did.
         </div>
@@ -722,7 +459,7 @@
     <script src="js/ui.js"></script>
     <script src="js/content.js"></script>
     <script>
-      // setAvatarExpression() and FACE/ARMS templates come from
+      // setAvatarExpression() comes from
       // js/avatar.js. showScreen, updateProgress, refreshScorePill,
       // showScorePill, and showBackBtn come from js/ui.js.
       // loadContent, shuffleArray, buildResourcesList, CONTENT_URL, and
